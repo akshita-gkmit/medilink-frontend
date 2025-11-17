@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
-import '../../styles/auth.css';
+
+import '../../index.css';
+import { useAuth } from "../../context/authContext";
 import ROUTES from "../../constants/routes";
 
 const Login = () => {
@@ -33,20 +34,20 @@ const Login = () => {
 
     console.log("LOGIN RESPONSE:", result);
 
-    if (result?.access_token) {
+    if (result?.success) {
       const userRole = result.role ? result.role.toLowerCase() : null;
 
       // Store login info
-      localStorage.setItem("token", result.access_token);
+      localStorage.setItem("token", result?.access_token);
       localStorage.setItem("role", userRole);
-      localStorage.setItem("user_id", result.user_id);
+      localStorage.setItem("user_id", result?.user_id);
       
       if (result.doctor_id) {
-        localStorage.setItem("doctor_id", result.doctor_id);
+        localStorage.setItem("doctor_id", result?.doctor_id);
       }
       console.log("LOGIN RESPONSE:", result);
+      alert(`Login successful as: ${userRole}`);
 
-      // Redirect based on role using ROUTES
       if (userRole?.toLowerCase() === "admin") {
         navigate(ROUTES.ADMIN_DASHBOARD);
       } 

@@ -1,4 +1,5 @@
-import React, { createContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+
 import { apiGet, apiPost } from "../services/apiHelper";
 import ROUTES from "../constants/routes";
 
@@ -36,39 +37,50 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (email, password) => {
-    try {
-      const response = await apiPost(ROUTES.AUTH_LOGIN, { email, password });
+  try {
+    const response = await apiPost(ROUTES.LOGIN, { email, password });
 
-      const accessToken = response?.data?.accessToken;
-      const loggedInUser = response?.data?.user;
+    // Backend returns access_token and role
+    const accessToken = response?.data?.access_token;
+    const role = response?.data?.role;
+    const doctorId = response?.data?.doctor_id || null;
+    const userId = response?.data?.user_id || null;
 
-      if (!accessToken || !loggedInUser) {
-        return { success: false, error: "Invalid server response" };
-      }
-
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("role", loggedInUser.role);
-
-      setUser(loggedInUser);
-      setIsAuthenticated(true);
-
-      return {
-        success: true,
-        role: loggedInUser.role,
-        user_id: loggedInUser.user_id,
-        doctor_id: loggedInUser.doctor_id,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error.response?.data?.message || "Login failed",
-      };
+    if (!accessToken || !role) {
+      return { success: false, error: "Invalid server response" };
     }
-  };
+
+    const loggedInUser = {
+      role,
+      user_id: userId,
+      doctor_id: doctorId,
+    };
+
+    // Save the token correctly
+    localStorage.setItem("accessToken", accessToken);
+    localStorage.setItem("role", loggedInUser.role);
+
+    setUser(loggedInUser);
+    setIsAuthenticated(true);
+
+    return {
+      success: true,
+      role,
+      user_id: userId,
+      doctor_id: doctorId,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.response?.data?.detail || "Login failed",
+    };
+  }
+};
+
 
   const register = async (userData) => {
     try {
-      const response = await apiPost(ROUTES.AUTH_REGISTER, userData);
+      const response = await apiPost(ROUTES.REGISTER, userData);
       return { success: true, message: response?.data?.message };
     } catch (error) {
       return {
@@ -101,3 +113,4 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+export const useAuth = () => useContext(AuthContext);
