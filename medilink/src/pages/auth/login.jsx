@@ -8,8 +8,10 @@ const Login = () => {
     email: '',
     password: '',
   });
+
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -27,13 +29,20 @@ const Login = () => {
     setLoading(true);
 
     const result = await login(formData.email, formData.password);
-    
+
     if (result.success) {
-      navigate('/admin/dashboard');
-    } else {
-      setError(result.error);
+  const userRole = result.role;
+
+  alert(`Logged in as: ${userRole}`);
+
+  if (userRole?.toLowerCase() === "admin") {
+    navigate("/admin/dashboard");
+  } else if (userRole?.toLowerCase() === "doctor") {
+    navigate("/doctor/dashboard");
+  } else {
+    navigate("/user/dashboard");
+  }
     }
-    
     setLoading(false);
   };
 
@@ -42,9 +51,9 @@ const Login = () => {
       <div className="auth-card">
         <h1>MediLink</h1>
         <h2>Login</h2>
-        
+
         {error && <div className="error-message">{error}</div>}
-        
+
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Email</label>
@@ -57,7 +66,7 @@ const Login = () => {
               placeholder="Enter your email"
             />
           </div>
-          
+
           <div className="form-group">
             <label>Password</label>
             <input
@@ -69,12 +78,12 @@ const Login = () => {
               placeholder="Enter your password"
             />
           </div>
-          
+
           <button type="submit" className="btn-primary" disabled={loading}>
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
-        
+
         <p className="auth-link">
           Don't have an account? <Link to="/register">Register</Link>
         </p>
