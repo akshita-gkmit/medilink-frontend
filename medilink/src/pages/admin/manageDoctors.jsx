@@ -18,16 +18,20 @@ const ManageDoctors = () => {
   }, []);
 
   const fetchDoctors = async () => {
-    try {
-      const response = await api.get('/admin/');
-      setDoctors(response.data.doctors || []);
-      setError('');
-    } catch (err) {
-      setError('Failed to load doctors');
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    const response = await api.get("/admin/");
+
+    console.log("RAW RESPONSE:", response.data); //🔥 check what you get
+
+    setDoctors(Array.isArray(response.data) ? response.data : []);
+  } catch (err) {
+    console.log("ERROR:", err.response?.data);
+    setError("Failed to load doctors");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleDelete = async (email) => {
     if (!window.confirm(`Are you sure you want to delete doctor: ${email}?`)) {
@@ -39,7 +43,10 @@ const ManageDoctors = () => {
     setSuccess('');
 
     try {
-      await api.patch(`/admin/doctor/delete/${email}`);
+      await api.patch(`/admin/doctor/delete/${email}`, {}, {
+  headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+});
+
       setSuccess('Doctor deleted successfully');
       fetchDoctors();
     } catch (err) {

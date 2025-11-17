@@ -1,27 +1,57 @@
-import axios from "axios";
+import { useEffect, useState } from "react";
 
 export const useAuth = () => {
+  const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false);
+    }
+
+    setLoading(false);
+  }, []);
+
   const login = async (email, password) => {
     try {
-      const res = await axios.post("http://localhost:8000/auth/login", {
-        email,
-        password,
+      const res = await fetch("http://localhost:8000/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
       });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        return { success: false, error: data.detail };
+      }
+
+      // Save login details
+      localStorage.setItem("token", data.access_token);
+      localStorage.setItem("role", data.role);
+
+      setIsAuthenticated(true);
 
       return {
         success: true,
-        access_token: res.data.access_token,
-        role: res.data.role,
-        user_id: res.data.user_id,
-        doctor_id: res.data.doctor_id,
+        access_token: data.access_token,
+        role: data.role,
+        user_id: data.user_id,
+        doctor_id: data.doctor_id,
       };
-    } catch (err) {
-      return {
-        success: false,
-        error: err.response?.data?.detail || "Login failed",
-      };
+    } catch (error) {
+      return { success: false, error: "Server error" };
     }
   };
 
-  return { login };
+  const logout = () => {
+    localStorage.clear();
+    setIsAuthenticated(false);
+  };
+
+  return { login, logout, isAuthenticated, loading };
 };

@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import api from '../../services/axios';
 import '../../styles/admin.css';
+import { API_ENDPOINTS } from "../../constants/apiEndpoints";
+
+
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -17,7 +20,9 @@ const Dashboard = () => {
 
   const fetchDashboard = async () => {
     try {
-      const response = await api.get('/admin/dashboard');
+      
+      const response = await api.get(API_ENDPOINTS.ADMIN_DASHBOARD);
+
       setDashboardData(response.data);
     } catch (err) {
       setError('Failed to load dashboard data');

@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import api from '../services/axios';
+import { apiGet, apiPost } from '../services/apiHelper';
 
 export const AuthContext = createContext();
 
@@ -13,18 +14,18 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const validateToken = async () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
+    const access_token = localStorage.getItem('access_token');
+    if (!access_token) {
       setLoading(false);
       return;
     }
 
     try {
-      const response = await api.get('/auth/validate-token');
+      const response = await apiGet('/auth/validate-token');
       setUser(response.data.user);
       setIsAuthenticated(true);
     } catch (error) {
-      localStorage.removeItem('token');
+      localStorage.removeItem('access_token');
       setIsAuthenticated(false);
     } finally {
       setLoading(false);
@@ -32,24 +33,33 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (email, password) => {
-    try {
-      const response = await api.post('/auth/login', { email, password });
-      const { token, user } = response.data;
-      localStorage.setItem('token', token);
-      setUser(user);
-      setIsAuthenticated(true);
-      return { success: true };
-    } catch (error) {
-      return { 
-        success: false, 
-        error: error.response?.data?.message || 'Login failed' 
-      };
+  try {
+    const response = await apiPost('/auth/login', { email, password });
+
+    const accessToken = response?.data?.accessToken;
+    const loggedInUser = response?.data?.user;
+
+    if (!accessToken || !loggedInUser) {
+      return { success: false, error: 'Invalid response from server' };
     }
-  };
+
+    localStorage.setItem('accessToken', accessToken);
+    setUser(loggedInUser);
+    setIsAuthenticated(true);
+
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.response?.data?.message || 'Login failed'
+    };
+  }
+};
+
 
   const register = async (userData) => {
     try {
-      const response = await api.post('/auth/register', userData);
+      const response = await apiPost('/auth/register', userData);
       return { success: true, message: response.data.message };
     } catch (error) {
       return { 
@@ -60,7 +70,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('access_token');
     setUser(null);
     setIsAuthenticated(false);
   };

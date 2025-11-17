@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import '../../styles/auth.css';
+import { API_ENDPOINTS } from "../../constants/apiEndpoints";
+
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -45,9 +47,9 @@ const Login = () => {
 
       // Redirect based on role
       if (userRole?.toLowerCase() === "admin") {
-        navigate("/admin/dashboard");
+        navigate(ADMIN_DASHBOARD);
       } 
-      else if (userRole === "doctor") {
+      else if (userRole?.toLowerCase() === "doctor") {
         navigate("/doctor/dashboard");
       } 
       else {
