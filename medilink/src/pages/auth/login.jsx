@@ -31,18 +31,33 @@ const Login = () => {
     const result = await login(formData.email, formData.password);
 
     if (result.success) {
-  const userRole = result.role;
+      const userRole = result.role ? result.role.toLowerCase() : null;
 
-  alert(`Logged in as: ${userRole}`);
+      alert(`Logged in as: ${userRole}`);
 
-  if (userRole?.toLowerCase() === "admin") {
-    navigate("/admin/dashboard");
-  } else if (userRole?.toLowerCase() === "doctor") {
-    navigate("/doctor/dashboard");
-  } else {
-    navigate("/user/dashboard");
-  }
+      // Store login info
+      localStorage.setItem("token", result.access_token);
+      localStorage.setItem("role", userRole);
+      localStorage.setItem("user_id", result.user_id);
+      if (result.doctor_id) {
+        localStorage.setItem("doctor_id", result.doctor_id);
+      }
+
+      // Redirect based on role
+      if (userRole?.toLowerCase() === "admin") {
+        navigate("/admin/dashboard");
+      } 
+      else if (userRole === "doctor") {
+        navigate("/doctor/dashboard");
+      } 
+      else {
+        navigate("/user/dashboard");
+      }
+    } 
+    else {
+      setError(result.error || "Invalid login credentials");
     }
+
     setLoading(false);
   };
 

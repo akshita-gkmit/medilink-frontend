@@ -1,17 +1,27 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://127.0.0.1:8000";
-
 export const useAuth = () => {
-  const register = async (formData) => {
-  try {
-    const response = await axios.post(`${API_BASE_URL}/auth/register`, formData);
-    return { success: true, data: response.data };
-  } catch (error) {
-    return { success: false, error: error.response?.data?.detail || "Registration failed" };
-  }
-};
+  const login = async (email, password) => {
+    try {
+      const res = await axios.post("http://localhost:8000/auth/login", {
+        email,
+        password,
+      });
 
+      return {
+        success: true,
+        access_token: res.data.access_token,
+        role: res.data.role,
+        user_id: res.data.user_id,
+        doctor_id: res.data.doctor_id,
+      };
+    } catch (err) {
+      return {
+        success: false,
+        error: err.response?.data?.detail || "Login failed",
+      };
+    }
+  };
 
-  return { register };
+  return { login };
 };
