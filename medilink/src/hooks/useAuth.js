@@ -4,17 +4,15 @@ export const useAuth = () => {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
+  const checkAuthStatus = () => {
+  const token = localStorage.getItem("token");
+  setIsAuthenticated(!!token);
+  setLoading(false);
+};
 
-    if (token) {
-      setIsAuthenticated(true);
-    } else {
-      setIsAuthenticated(false);
-    }
-
-    setLoading(false);
-  }, []);
+useEffect(() => {
+  checkAuthStatus();
+}, []);
 
   const login = async (email, password) => {
     try {
