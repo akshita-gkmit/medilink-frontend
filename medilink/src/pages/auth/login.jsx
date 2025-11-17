@@ -77,7 +77,7 @@ const Login = () => {
         </form>
 
         <p className="auth-link">
-          No account? <Link to="/register">Register</Link>
+          No account? <Link to={ROUTES.AUTH_REGISTER}>Register</Link>
         </p>
       </div>
     </div>
