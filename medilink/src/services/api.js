@@ -10,7 +10,6 @@ const api = axios.create({
   withCredentials: false,
 });
 
-// ✅ FIXED: use accessToken (NOT token)
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("accessToken");
