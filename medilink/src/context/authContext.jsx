@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect } from 'react';
 import api from '../services/axios';
 import { apiGet, apiPost } from '../services/apiHelper';
 
+import ROUTES from "../constants/routes";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -21,7 +22,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      const response = await apiGet('/auth/validate-token');
+      const response = await apiGet(ROUTES.AUTH_VALIDATE_TOKEN);
       setUser(response.data.user);
       setIsAuthenticated(true);
     } catch (error) {
@@ -34,7 +35,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
   try {
-    const response = await apiPost('/auth/login', { email, password });
+    const response = await apiPost(ROUTES.AUTH_LOGIN, { email, password });
 
     const accessToken = response?.data?.accessToken;
     const loggedInUser = response?.data?.user;
@@ -59,7 +60,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-      const response = await apiPost('/auth/register', userData);
+      const response = await apiPost(ROUTES.AUTH_REGISTER, userData);
       return { success: true, message: response.data.message };
     } catch (error) {
       return { 

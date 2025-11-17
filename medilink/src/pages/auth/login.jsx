@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import '../../styles/auth.css';
-import { API_ENDPOINTS } from "../../constants/apiEndpoints";
-
+import ROUTES from "../../constants/routes";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -35,31 +34,29 @@ const Login = () => {
     console.log("LOGIN RESPONSE:", result);
 
     if (result?.access_token) {
-
       const userRole = result.role ? result.role.toLowerCase() : null;
-
-      alert(`Logged in as: ${userRole}`);
 
       // Store login info
       localStorage.setItem("token", result.access_token);
       localStorage.setItem("role", userRole);
       localStorage.setItem("user_id", result.user_id);
+      
       if (result.doctor_id) {
         localStorage.setItem("doctor_id", result.doctor_id);
       }
+      console.log("LOGIN RESPONSE:", result);
 
-      // Redirect based on role
+      // Redirect based on role using ROUTES
       if (userRole?.toLowerCase() === "admin") {
-        navigate(ADMIN_DASHBOARD);
+        navigate(ROUTES.ADMIN_DASHBOARD);
       } 
       else if (userRole?.toLowerCase() === "doctor") {
-        navigate("/doctor/dashboard");
+        navigate(ROUTES.DOCTOR_DASHBOARD);
       } 
       else {
-        navigate("/user/dashboard");
+        navigate(ROUTES.USER_DASHBOARD);
       }
-    } 
-    else {
+    } else {
       setError(result.error || "Invalid login credentials");
     }
 

@@ -4,7 +4,6 @@ import { useAuth } from '../../hooks/useAuth';
 import api from '../../services/axios';
 import '../../styles/admin.css';
 import ROUTES from "../../constants/routes";
-import { API_ENDPOINTS } from "../../constants/apiEndpoints";
 
 
 
@@ -22,7 +21,7 @@ const Dashboard = () => {
   const fetchDashboard = async () => {
     try {
       
-      const response = await api.get(API_ENDPOINTS.ADMIN_DASHBOARD);
+      const response = await api.get(ROUTES.ADMIN_DASHBOARD);
 
       setDashboardData(response.data);
     } catch (err) {

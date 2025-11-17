@@ -5,6 +5,7 @@ import Login from '../pages/auth/login';
 import Register from '../pages/auth/register';
 import Dashboard from '../pages/admin/Dashboard';
 import ManageDoctors from '../pages/admin/manageDoctors';
+import ROUTES from '../constants/routes';   // ✅ FIXED IMPORT
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
@@ -28,25 +29,28 @@ const ProtectedRoute = ({ children }) => {
 const AppRouter = () => {
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      <Route path={ROUTES.LOGIN} element={<Login />} />
+      <Route path={ROUTES.REGISTER} element={<Register />} />
+      
       <Route
-        path="/admin/dashboard"
+        path={ROUTES.ADMIN_DASHBOARD}
         element={
           <ProtectedRoute>
             <Dashboard />
           </ProtectedRoute>
         }
       />
+
       <Route
-        path="/admin/doctors"
+        path={ROUTES.ADMIN_DOCTORS}
         element={
           <ProtectedRoute>
             <ManageDoctors />
           </ProtectedRoute>
         }
       />
-      <Route path="/" element={<Navigate to="/login" replace />} />
+
+      <Route path="/" element={<Navigate to={ROUTES.LOGIN} replace />} />
     </Routes>
   );
 };
