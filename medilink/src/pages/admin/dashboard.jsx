@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import api from '../../services/axios';
 import '../../styles/admin.css';
+import ROUTES from "../../constants/routes";
 import { API_ENDPOINTS } from "../../constants/apiEndpoints";
 
 
@@ -33,7 +34,7 @@ const Dashboard = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate(ROUTES.LOGIN);
   };
 
   if (loading) {
