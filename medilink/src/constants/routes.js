@@ -11,6 +11,10 @@ const ROUTES = {
 
   // Doctor Routes
   DOCTOR_DASHBOARD: "/doctor/dashboard",
+  
+  AUTH_LOGIN: "/auth/login",
+  AUTH_REGISTER: "/auth/register",
+  AUTH_VALIDATE_TOKEN: "/auth/validate-token",
 };
 
 export default ROUTES;

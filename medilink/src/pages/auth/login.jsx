@@ -32,7 +32,10 @@ const Login = () => {
 
     const result = await login(formData.email, formData.password);
 
-    if (result.success) {
+    console.log("LOGIN RESPONSE:", result);
+
+    if (result?.access_token) {
+
       const userRole = result.role ? result.role.toLowerCase() : null;
 
       alert(`Logged in as: ${userRole}`);
