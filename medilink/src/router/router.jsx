@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import Login from '../pages/auth/login';
 import Register from '../pages/auth/register';
-import Dashboard from '../pages/admin/dashboard';
+import Dashboard from '../pages/admin/Dashboard';
 import ManageDoctors from '../pages/admin/manageDoctors';
 
 const ProtectedRoute = ({ children }) => {
