@@ -4,8 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import '../../index.css';
 import ROUTES from "../../constants/routes";
-
-
+import { apiGet } from "../../services/apiHelper";
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -21,7 +20,7 @@ const Dashboard = () => {
   const fetchDashboard = async () => {
     try {
       
-      const response = await api.get(ROUTES.ADMIN_DASHBOARD);
+      const response = await apiGet(ROUTES.ADMIN_DASHBOARD);
 
       setDashboardData(response.data);
     } catch (err) {
@@ -49,8 +48,8 @@ const Dashboard = () => {
       <nav className="navbar">
         <div className="navbar-brand">MediLink Admin</div>
         <div className="navbar-menu">
-          <span className="navbar-user">Welcome, {user?.username}</span>
-          <button onClick={() => navigate('/admin/doctors')} className="btn-secondary">
+          <span className="navbar-user">Welcome, {user?.name}</span>
+          <button onClick={() => navigate(ROUTES.ADMIN_DOCTORS)} className="btn-secondary">
             Manage Doctors
           </button>
           <button onClick={handleLogout} className="btn-logout">
