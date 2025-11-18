@@ -4,9 +4,10 @@ const API = {
   AUTH_VALIDATE_TOKEN: "/auth/validate-token",
 
   ADMIN_DASHBOARD: "/admin/dashboard",
-  ADMIN_DOCTORS: "/admin/doctors",
-  USER_DASHBOARD: "/user/dashboard",
+  ADMIN: "/admin/",
+  PATIENT_DASHBOARD: "/patient/dashboard",
   DOCTOR_DASHBOARD: "/doctor/dashboard",
+  ADMIN_DOCTOR_DELETE: "/admin/doctor/delete"
 };
 
 export default API;

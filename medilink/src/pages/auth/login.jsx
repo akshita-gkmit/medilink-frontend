@@ -50,7 +50,7 @@ const Login = () => {
         } else if (result.role === ROLES.DOCTOR) {
           navigate(ROUTES.DOCTOR_DASHBOARD);
         } else {
-          navigate(ROUTES.USER_DASHBOARD);
+          navigate(ROUTES.PATIENT_DASHBOARD);
         }
       }, 1500);
 
