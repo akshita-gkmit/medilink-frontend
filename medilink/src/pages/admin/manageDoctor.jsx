@@ -21,7 +21,7 @@ const ManageDoctors = () => {
   try {
     const response = await api.get("/admin/");
 
-    console.log("RAW RESPONSE:", response.data); //🔥 check what you get
+    console.log("RAW RESPONSE:", response.data);
 
     setDoctors(Array.isArray(response.data) ? response.data : []);
   } catch (err) {
