@@ -9,7 +9,7 @@ import { useAuth } from "../context/authContext";
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
-  if (loading) return <>Loading...</>;
+  if (loading) return <>Loading...</>; //Checks if app is still verifying token
   return isAuthenticated ? children : <Navigate to={ROUTES.AUTH_LOGIN} replace />;
 };
 

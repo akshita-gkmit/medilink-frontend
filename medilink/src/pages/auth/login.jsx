@@ -29,10 +29,11 @@ const Login = () => {
       
       if (result.success) {
         alert(`Logged in as: ${result.role}`);
-        
+        console.log(ROUTES.ADMIN_DASHBOARD);
+
         if (result.role === "admin") navigate(ROUTES.ADMIN_DASHBOARD);
         else if (result.role === "doctor") navigate(ROUTES.DOCTOR_DASHBOARD);
-        else navigate(ROUTES.USER_DASHBOARD);
+        else navigate(ROUTES.ADMIN_DASHBOARD);
       } else {
         setError(result.error);
       }
