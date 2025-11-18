@@ -1,9 +1,4 @@
 const ROUTES = {
-  // FRONTEND ROUTES
-  LOGIN: "/auth/login",
-  REGISTER: "/auth/register",
-
-  // BACKEND AUTH ROUTES
   AUTH_LOGIN: "/auth/login",
   AUTH_REGISTER: "/auth/register",
   AUTH_VALIDATE_TOKEN: "/auth/validate-token",
