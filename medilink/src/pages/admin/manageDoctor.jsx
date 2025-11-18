@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import API from '../../constants/apiEndpoints';
-import { apiCall } from '../../services/apiHelper'
-import '../../index.css';
+import { apiCall } from '../../services/apiHelper';
 import ROUTES from '../../constants/navigationPath';
+import { useAuth } from '../../context/authContext';
+import '../../index.css';
 
 const ManageDoctors = () => {
   const [doctors, setDoctors] = useState([]);
@@ -12,6 +13,7 @@ const ManageDoctors = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [deleteLoading, setDeleteLoading] = useState(null);
+
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -20,40 +22,40 @@ const ManageDoctors = () => {
   }, []);
 
   const fetchDoctors = async () => {
-  try {
-    const response = await apiCall("Get",API.ADMIN);
-    setDoctors(Array.isArray(response.data) ? response.data : []);
-  } catch (err) {
-    setError("Failed to load doctors");
-  } finally {
-    setLoading(false);
-  }
-};
-
-  const handleDelete = async (email) => {
-    if (!window.confirm(`Are you sure you want to delete doctor: ${email}?`)) {
-        return;
+    try {
+      const response = await apiCall("GET", API.ADMIN);
+      setDoctors(Array.isArray(response.data) ? response.data : []);
+    } catch (err) {
+      setError("Failed to load doctors");
+    } finally {
+      setLoading(false);
     }
+  };
 
-    setDeleteLoading(email);
+  /** ==============================
+   * 🔥 Soft Delete Doctor by ID (PATCH)
+   * =============================== */
+  const handleDelete = async (doctorId) => {
+    if (!window.confirm(`Are you sure you want to delete doctor ID: ${doctorId}?`)) return;
+
+    setDeleteLoading(doctorId);
     setError('');
     setSuccess('');
 
     try {
-        await apiCall("PATCH", `${API.ADMIN_DOCTOR_DELETE}/${email}`);
-        setSuccess("Doctor deleted successfully");
-        fetchDoctors();
+      const res = await apiCall("PATCH", `${API.ADMIN_DOCTOR_DELETE}/${doctorId}`);
+      setSuccess("Doctor soft deleted successfully");
+      fetchDoctors();
     } catch (err) {
-        setError(err.response?.data?.message || "Failed to delete doctor");
+      setError(err.response?.data?.detail || "Failed to delete doctor");
     } finally {
-        setDeleteLoading(null);
+      setDeleteLoading(null);
     }
-    };
-
+  };
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate(ROUTES.LOGIN);
   };
 
   if (loading) {
@@ -70,9 +72,16 @@ const ManageDoctors = () => {
         <div className="navbar-brand">MediLink Admin</div>
         <div className="navbar-menu">
           <span className="navbar-user">Welcome, {user?.username}</span>
-          <button onClick={() => navigate(ROUTES.ADMIN_DASHBOARD)} className="btn-secondary">
+
+          <button
+            onClick={() => navigate(ROUTES.ADMIN_DASHBOARD)}
+            className="btn-secondary"
+          >
             Dashboard
           </button>
+
+          
+
           <button onClick={handleLogout} className="btn-logout">
             Logout
           </button>
@@ -81,10 +90,10 @@ const ManageDoctors = () => {
 
       <div className="content">
         <h1>Manage Doctors</h1>
-        
+
         {error && <div className="error-message">{error}</div>}
         {success && <div className="success-message">{success}</div>}
-        
+
         {doctors?.length === 0 ? (
           <div className="empty-state">No doctors found</div>
         ) : (
@@ -92,32 +101,43 @@ const ManageDoctors = () => {
             <table className="data-table">
               <thead>
                 <tr>
+                  <th>ID</th>
                   <th>Name</th>
-                  <th>Email</th>
                   <th>Specialization</th>
-                  <th>Phone</th>
+                  <th>Position</th>
                   <th>Actions</th>
                 </tr>
               </thead>
+
               <tbody>
                 {doctors?.map((doctor) => (
-                  <tr key={doctor.email || doctor.id}>
-                    <td>{doctor.name || doctor.username}</td>
-                    <td>{doctor.email}</td>
+                  <tr key={doctor.id}>
+                    <td>{doctor.id}</td>
+                    <td>{doctor.name}</td>
                     <td>{doctor.specialization || 'N/A'}</td>
-                    <td>{doctor.phone || 'N/A'}</td>
-                    <td>
+                    <td>{doctor.position || 'N/A'}</td>
+
+                    <td className="action-buttons">
                       <button
-                        onClick={() => handleDelete(doctor.email)}
-                        className="btn-delete"
-                        disabled={deleteLoading === doctor.email}
+                        onClick={() => navigate(`/admin/doctors/${doctor.id}`, { state: doctor })}
+                        className="btn-view"
                       >
-                        {deleteLoading === doctor.email ? 'Deleting...' : 'Delete'}
+                        View
+                      </button>
+
+                      <button
+                        onClick={() => handleDelete(doctor.id)}
+                        className="btn-delete"
+                        disabled={deleteLoading === doctor.id}
+                      >
+                        {deleteLoading === doctor.id ? "Deleting..." : "Delete"}
                       </button>
                     </td>
+
                   </tr>
                 ))}
               </tbody>
+
             </table>
           </div>
         )}

@@ -6,6 +6,9 @@ import { useAuth } from "../context/authContext";
 import Register from "../pages/auth/register";
 import Dashboard from "../pages/admin/dashboard";
 import ManageDoctors from "../pages/admin/manageDoctor";
+import ViewDoctor from "../pages/ViewDoctor";
+import CreateDoctor from "../pages/admin/createDoctor";
+import UpdateDoctor from "../pages/admin/UpdateDoctor";
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -19,7 +22,9 @@ const AppRouter = () => (
     <Route path={ROUTES.REGISTER} element={<Register />} /> 
     <Route path={ROUTES.ADMIN_DASHBOARD} element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
     <Route path={ROUTES.ADMIN_MANAGE_DOCTOR} element={<ProtectedRoute><ManageDoctors /></ProtectedRoute>} />
-
+    <Route path={ROUTES.ADMIN_ADD_DOCTOR} element={<CreateDoctor />} />
+    <Route path="/admin/doctor/update/:doctor_id" element={<UpdateDoctor />} />
+    <Route path="/doctor/:id" element={<ViewDoctor />} />
     <Route path="*" element={<Navigate to={ROUTES.LOGIN} replace />} />
   </Routes>
 );

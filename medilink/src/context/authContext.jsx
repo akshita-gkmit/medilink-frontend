@@ -51,7 +51,13 @@ export const AuthProvider = ({ children }) => {
       if (userId) localStorage.setItem("userId", userId);
       if (doctorId) localStorage.setItem("doctorId", doctorId);
 
-      setUserDetails({ role, userId, doctorId });
+      setUserDetails({
+        role,
+        userId,
+        doctorId,
+        name: response?.data?.name 
+      });
+
       setIsAuthenticated(true);
 
       return { success: true, role, userId, doctorId };
@@ -98,7 +104,16 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ userDetails, isAuthenticated, isLoading, login, logout, register }}>
+    <AuthContext.Provider value={{
+  user: userDetails,
+  userDetails,
+  isAuthenticated,
+  isLoading,
+  login,
+  logout,
+  register
+}}>
+
       {children}
     </AuthContext.Provider>
   );

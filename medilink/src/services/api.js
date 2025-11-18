@@ -12,11 +12,12 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const accessToken = localStorage.getItem("access_token");
-    if (accessToken) config.headers.Authorization = `Bearer ${accessToken}`;
+    const token = localStorage.getItem("access_token");
+    if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
   },
   (error) => Promise.reject(error)
 );
+
 
 export default api;
