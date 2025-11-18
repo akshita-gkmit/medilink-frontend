@@ -14,4 +14,8 @@ export const COLORS = {
   BUTTON_BG_DARK: "#1a1a1a",
   BUTTON_BORDER_HOVER: "#27ae60",
   BUTTON_BG_LIGHT: "#f9f9f9",
+
+  BOX_SHADOW: "0 2px 10px rgba(0, 0, 0, 0.1)",
+  BORDER: "1px solid #ccc",
+  ERROR: "#d32f2f",
 };

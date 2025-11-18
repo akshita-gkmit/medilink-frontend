@@ -1,10 +1,13 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+
 import Login from "../pages/auth/login";
+import ROUTES from "../constants/navigationPath";
+import { useAuth } from "../context/authContext";
+
+//* will need this code in next pr *
 // import Register from "../pages/auth/register";
 // import Dashboard from "../pages/admin/Dashboard";
 // import ManageDoctors from "../pages/admin/manageDoctors";
-import ROUTES from "../constants/routes";
-import { useAuth } from "../context/authContext";
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
@@ -15,8 +18,10 @@ const ProtectedRoute = ({ children }) => {
 const AppRouter = () => (
   <Routes>
     <Route path={ROUTES.LOGIN} element={<Login />} />
+    
+    {/*  will need this code in next pr */}
     {/* <Route path={ROUTES.REGISTER} element={<Register />} /> */}
-{/* 
+    {/* 
     <Route path={ROUTES.ADMIN_DASHBOARD} element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
     <Route path={ROUTES.ADMIN_DOCTORS} element={<ProtectedRoute><ManageDoctors /></ProtectedRoute>} /> */}
 
