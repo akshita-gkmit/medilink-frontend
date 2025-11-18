@@ -76,6 +76,24 @@ const Register = () => {
     setLoading(false);
   };
 
+  const genderOptions = [
+    { value: "", label: "Select Gender" },
+    { value: "male", label: "Male" },
+    { value: "female", label: "Female" },
+    { value: "other", label: "Other" }
+  ];
+  const bloodGroups = [
+    { value: "", label: "Select Blood Group (Optional)" },
+    { value: "A+", label: "A+" },
+    { value: "A-", label: "A-" },
+    { value: "B+", label: "B+" },
+    { value: "B-", label: "B-" },
+    { value: "AB+", label: "AB+" },
+    { value: "AB-", label: "AB-" },
+    { value: "O+", label: "O+" },
+    { value: "O-", label: "O-" },
+  ];
+
   return (
     <div className="auth-container">
       <div className="auth-card">
@@ -115,12 +133,14 @@ const Register = () => {
               onChange={handleChange}
               required
             >
-              <option value="">Select Gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
+              {genderOptions.map((opt, index) => (
+                <option key={index} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
             </select>
           </div>
+
 
           <InputField
             label="Date of Birth"
@@ -138,17 +158,14 @@ const Register = () => {
               value={formData.blood_group}
               onChange={handleChange}
             >
-              <option value="">Select Blood Group (Optional)</option>
-              <option value="A+">A+</option>
-              <option value="A-">A-</option>
-              <option value="B+">B+</option>
-              <option value="B-">B-</option>
-              <option value="AB+">AB+</option>
-              <option value="AB-">AB-</option>
-              <option value="O+">O+</option>
-              <option value="O-">O-</option>
+              {bloodGroups.map((item, index) => (
+                <option key={index} value={item.value}>
+                  {item.label}
+                </option>
+              ))}
             </select>
           </div>
+
 
           <InputField
             label="Password"
