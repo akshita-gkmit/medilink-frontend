@@ -9,6 +9,8 @@ import ManageDoctors from "../pages/admin/manageDoctor";
 import ViewDoctor from "../pages/ViewDoctor";
 import CreateDoctor from "../pages/admin/createDoctor";
 import UpdateDoctor from "../pages/admin/UpdateDoctor";
+import ManageSlots from "../pages/doctor/manageSlots";
+import DoctorDashboard from "../pages/doctor/doctorDashboad";
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -18,6 +20,8 @@ const ProtectedRoute = ({ children }) => {
 
 const AppRouter = () => (
   <Routes>
+    <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
+    <Route path="/doctor/:doctor_id/slots" element={<ManageSlots />} />
     <Route path={ROUTES.LOGIN} element={<Login />} />
     <Route path={ROUTES.REGISTER} element={<Register />} /> 
     <Route path={ROUTES.ADMIN_DASHBOARD} element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

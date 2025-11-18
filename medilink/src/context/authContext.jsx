@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useEffect } from "react";
-
 import { apiCall } from "../services/apiHelper";
 import API from "../constants/apiEndpoints";
 
@@ -14,22 +13,36 @@ export const AuthProvider = ({ children }) => {
     validateToken();
   }, []);
 
+  // ✅ FIXED validateToken — matches backend response
   const validateToken = async () => {
-    const access_token = localStorage.getItem("access_token");
-    if (!access_token) {
+    const token = localStorage.getItem("access_token");
+    if (!token) {
       setLoading(false);
       return;
     }
 
     try {
-      const response = await apiCall("GET", API.AUTH_VALIDATE_TOKEN);
-      setUserDetails(response?.data?.user || response?.data);
+      const { data } = await apiCall("GET", API.AUTH_VALIDATE_TOKEN);
+
+      const {
+        email,
+        role,
+        user_id,
+        doctor_id,
+      } = data || {};
+
+      setUserDetails({
+        email,
+        role,
+        userId: user_id,
+        doctorId: doctor_id,
+        name: data.name || "Doctor",
+      });
+
       setIsAuthenticated(true);
+
     } catch (error) {
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("role");
-      localStorage.removeItem("userId");
-      localStorage.removeItem("doctorId");
+      localStorage.clear();
       setUserDetails(null);
       setIsAuthenticated(false);
     } finally {
@@ -37,30 +50,44 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Login (already fixed & destructured)
   const login = async (email, password) => {
     try {
-      const response = await apiCall("Post", API.AUTH_LOGIN, { email, password });
-      const {access_token, role, doctorId, userId} = response?.data || {};       
+      const { data } = await apiCall("POST", API.AUTH_LOGIN, { email, password });
+
+      const {
+        access_token,
+        refresh_token,
+        email: userEmail,
+        role,
+        userId,
+        doctorId,
+        name
+      } = data || {};
 
       if (!access_token) {
         return { success: false, error: "Invalid server response" };
       }
 
+      // Save tokens & role
       localStorage.setItem("access_token", access_token);
-      localStorage.setItem("role", role?.toLowerCase());
-      if (userId) localStorage.setItem("userId", userId);
+      localStorage.setItem("role", role.toLowerCase());
+      localStorage.setItem("userId", userId);
       if (doctorId) localStorage.setItem("doctorId", doctorId);
 
+      // Save to state
       setUserDetails({
+        email: userEmail,
         role,
         userId,
         doctorId,
-        name: response?.data?.name 
+        name,
       });
 
       setIsAuthenticated(true);
 
-      return { success: true, role, userId, doctorId };
+      return { success: true, role };
+
     } catch (error) {
       return {
         success: false,
@@ -69,51 +96,23 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const register = async (formData) => {
-  try {
-    const response = await apiPost(ROUTES.AUTH_REGISTER, {
-      name: formData?.name,
-      email: formData?.email,
-      password: formData?.password,
-      gender: formData?.gender,
-      dob: formData?.dob,
-      blood_group: formData?.blood_group,
-    });
-
-    return {
-      success: true,
-      message: "Registration successful",
-      data: response.data
-    };
-  } catch (error) {
-    return {
-      success: false,
-      error: error.response?.data?.detail || JSON.stringify(error.response?.data)
-    };
-  }
-};
-
-
   const logout = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("role");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("doctorId");
+    localStorage.clear();
     setUserDetails(null);
     setIsAuthenticated(false);
   };
 
   return (
-    <AuthContext.Provider value={{
-  user: userDetails,
-  userDetails,
-  isAuthenticated,
-  isLoading,
-  login,
-  logout,
-  register
-}}>
-
+    <AuthContext.Provider
+      value={{
+        user: userDetails,
+        userDetails,
+        isAuthenticated,
+        isLoading,
+        login,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -9,9 +9,12 @@ const API = {
   ADMIN_UPDATE_DOCTOR: "/admin/doctor/update",
   ADMIN_DOCTOR_DELETE: "/admin/doctor/delete",
   GET_DOCTOR: "/doctor",
-
+           
   PATIENT_DASHBOARD: "/patient/dashboard",
   DOCTOR_DASHBOARD: "/doctor/dashboard",
+
+  GET_DOCTOR_SLOTS: "/doctor/slots",
+  CREATE_DOCTOR_SLOTS: "/doctor/slots/create",
   
   ADMIN_DOCTOR_EMAIL: "/admin/doctor/email"
 };
