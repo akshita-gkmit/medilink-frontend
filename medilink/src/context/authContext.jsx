@@ -66,12 +66,12 @@ export const AuthProvider = ({ children }) => {
   const register = async (formData) => {
   try {
     const response = await apiPost(ROUTES.AUTH_REGISTER, {
-      name: formData.name,
-      email: formData.email,
-      password: formData.password,
-      gender: formData.gender,
-      dob: formData.dob,
-      blood_group: formData.blood_group,
+      name: formData?.name,
+      email: formData?.email,
+      password: formData?.password,
+      gender: formData?.gender,
+      dob: formData?.dob,
+      blood_group: formData?.blood_group,
     });
 
     return {
@@ -80,7 +80,6 @@ export const AuthProvider = ({ children }) => {
       data: response.data
     };
   } catch (error) {
-    console.error("Registration error:", error);
     return {
       success: false,
       error: error.response?.data?.detail || JSON.stringify(error.response?.data)

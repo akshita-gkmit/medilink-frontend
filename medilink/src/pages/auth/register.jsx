@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
-import '../../index.css';
+import ROUTES from "../../constants/navigationPath";
+import InputField from "../../components/inputField";
 import { useAuth } from "../../context/authContext";
+import "../../index.css";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -61,7 +63,7 @@ const Register = () => {
 
     if (result.success) {
       setSuccess('Registration successful! Redirecting to login...');
-      setTimeout(() => navigate('/login'), 2000);
+      setTimeout(() => navigate(ROUTES.LOGIN), 2000);
     } else {
       // Ensure error is always a string
       setError(
@@ -85,29 +87,25 @@ const Register = () => {
 
         <form onSubmit={handleSubmit}>
           
-          <div className="form-group">
-            <label>Full Name</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              placeholder="Enter your full name"
-            />
-          </div>
+          <InputField
+            label="Full Name"
+            type="text"
+            name="name"
+            value={formData.name}
+            placeholder="Enter your full name"
+            onChange={handleChange}
+            required
+          />
 
-          <div className="form-group">
-            <label>Email</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              placeholder="Enter your email"
-            />
-          </div>
+          <InputField
+            label="Email"
+            type="email"
+            name="email"
+            value={formData.email}
+            placeholder="Enter your email"
+            onChange={handleChange}
+            required
+          />
 
           <div className="form-group">
             <label>Gender</label>
@@ -124,16 +122,14 @@ const Register = () => {
             </select>
           </div>
 
-          <div className="form-group">
-            <label>Date of Birth</label>
-            <input
-              type="date"
-              name="dob"
-              value={formData.dob}
-              onChange={handleChange}
-              required
-            />
-          </div>
+          <InputField
+            label="Date of Birth"
+            type="date"
+            name="dob"
+            value={formData.dob}
+            onChange={handleChange}
+            required
+          />
 
           <div className="form-group">
             <label>Blood Group</label>
@@ -154,29 +150,25 @@ const Register = () => {
             </select>
           </div>
 
-          <div className="form-group">
-            <label>Password</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              placeholder="Enter your password"
-            />
-          </div>
+          <InputField
+            label="Password"
+            type="password"
+            name="password"
+            value={formData.password}
+            placeholder="Enter your password"
+            onChange={handleChange}
+            required
+          />
 
-          <div className="form-group">
-            <label>Confirm Password</label>
-            <input
-              type="password"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-              placeholder="Confirm your password"
-            />
-          </div>
+          <InputField
+            label="Confirm Password"
+            type="password"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            placeholder="Confirm your password"
+            onChange={handleChange}
+            required
+          />
 
           <button type="submit" className="btn-primary" disabled={loading}>
             {loading ? 'Registering...' : 'Register'}
@@ -184,7 +176,7 @@ const Register = () => {
         </form>
 
         <p className="auth-link">
-          Already have an account? <Link to="/login">Login</Link>
+          Already have an account? <Link to={ROUTES.LOGIN}>Login</Link>
         </p>
       </div>
     </div>

@@ -3,10 +3,10 @@ const ROUTES = {
   REGISTER: "/register",
 
   ADMIN_DASHBOARD: "/admin/dashboard",
-  ADMIN_DOCTORS: "/admin/doctors",
+  ADMIN_MANAGE_DOCTOR: "/admin/manageDoctor",
 
   DOCTOR_DASHBOARD: "/doctor/dashboard",
-  USER_DASHBOARD: "/user/dashboard",
+  PATIENT_DASHBOARD: "/patient/dashboard",
 };
 
 export default ROUTES;

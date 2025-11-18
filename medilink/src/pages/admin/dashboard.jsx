@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import api from '../../services/api';
+import API from "../../constants/apiEndpoints";
+import ROUTES from "../../constants/navigationPath";
+import { apiCall } from "../../services/apiHelper";
+import { useAuth } from "../../context/authContext";
 import '../../index.css';
-import ROUTES from "../../constants/routes";
-import { apiGet } from "../../services/apiHelper";
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -19,10 +20,8 @@ const Dashboard = () => {
 
   const fetchDashboard = async () => {
     try {
-      
-      const response = await apiGet(ROUTES.ADMIN_DASHBOARD);
-
-      setDashboardData(response.data);
+      const response = await apiCall("GET", API.ADMIN_DASHBOARD);
+      setDashboardData(response?.data);
     } catch (err) {
       setError('Failed to load dashboard data');
     } finally {
@@ -35,7 +34,7 @@ const Dashboard = () => {
     navigate(ROUTES.LOGIN);
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="admin-container">
         <div className="loading">Loading dashboard...</div>
@@ -43,13 +42,20 @@ const Dashboard = () => {
     );
   }
 
+  const stats = [
+    { label: "Total Doctors", value: dashboardData?.totalDoctors || 0 },
+    { label: "Total Appointments", value: dashboardData?.totalAppointments || 0 },
+    { label: "Total Patients", value: dashboardData?.totalPatients || 0 },
+    { label: "Pending Requests", value: dashboardData?.pendingRequests || 0 },
+  ];
+
   return (
     <div className="admin-container">
       <nav className="navbar">
         <div className="navbar-brand">MediLink Admin</div>
         <div className="navbar-menu">
           <span className="navbar-user">Welcome, {user?.name}</span>
-          <button onClick={() => navigate(ROUTES.ADMIN_DOCTORS)} className="btn-secondary">
+          <button onClick={() => navigate(ROUTES.ADMIN)} className="btn-secondary">
             Manage Doctors
           </button>
           <button onClick={handleLogout} className="btn-logout">
@@ -60,30 +66,17 @@ const Dashboard = () => {
 
       <div className="content">
         <h1>Dashboard</h1>
-        
-        {error && <div className="error-message">{error}</div>}
-        
-        {dashboardData && (
+
+        {error ? (
+          <div className="error-message">{error}</div>
+        ) : (
           <div className="stats-grid">
-            <div className="stat-card">
-              <h3>Total Doctors</h3>
-              <p className="stat-number">{dashboardData.totalDoctors || 0}</p>
-            </div>
-            
-            <div className="stat-card">
-              <h3>Total Appointments</h3>
-              <p className="stat-number">{dashboardData.totalAppointments || 0}</p>
-            </div>
-            
-            <div className="stat-card">
-              <h3>Total Patients</h3>
-              <p className="stat-number">{dashboardData.totalPatients || 0}</p>
-            </div>
-            
-            <div className="stat-card">
-              <h3>Pending Requests</h3>
-              <p className="stat-number">{dashboardData.pendingRequests || 0}</p>
-            </div>
+            {stats.map((item, index) => (
+              <div className="stat-card" key={index}>
+                <h3>{item.label}</h3>
+                <p className="stat-number">{item.value}</p>
+              </div>
+            ))}
           </div>
         )}
       </div>
