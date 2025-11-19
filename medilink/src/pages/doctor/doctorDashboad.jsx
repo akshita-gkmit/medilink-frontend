@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { apiCall } from "../../services/apiHelper";
 import API from "../../constants/apiEndpoints";
 import "../../index.css";
@@ -12,40 +13,6 @@ const DoctorDashboard = () => {
 
   const navigate = useNavigate();
 
-  console.log("Auth Loading:", isLoading);
-  console.log("User:", user);
-  console.log("Doctor ID:", user?.doctorId);
-
-  // ------------------ AUTH CHECKS ------------------
-
-  // 1️⃣ Wait for AuthContext to finish loading
-  if (isLoading) {
-    return (
-      <div className="admin-container">
-        <div className="loading">Loading dashboard...</div>
-      </div>
-    );
-  }
-
-  // 2️⃣ After auth is loaded → check for user
-  if (!user) {
-    return (
-      <div className="admin-container">
-        <div className="loading">User not found.</div>
-      </div>
-    );
-  }
-
-  // 3️⃣ User exists → check doctorId
-  if (user.role === "doctor" && !user.doctorId) {
-    return (
-      <div className="admin-container">
-        <div className="loading">Doctor profile not found.</div>
-      </div>
-    );
-  }
-
-  // ------------------ FETCH DOCTOR STATS ------------------
   useEffect(() => {
     if (!user?.doctorId) return;
 
@@ -66,7 +33,30 @@ const DoctorDashboard = () => {
     fetchStats();
   }, [user]);
 
-  // Still loading stats
+  if (isLoading) {
+    return (
+      <div className="admin-container">
+        <div className="loading">Loading user session...</div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="admin-container">
+        <div className="loading">User not found.</div>
+      </div>
+    );
+  }
+
+  if (user.role === "doctor" && !user.doctorId) {
+    return (
+      <div className="admin-container">
+        <div className="loading">Doctor profile not found.</div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="admin-container">
@@ -75,13 +65,11 @@ const DoctorDashboard = () => {
     );
   }
 
-  // ------------------ HANDLERS ------------------
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
 
-  // ------------------ FINAL UI ------------------
   return (
     <div className="admin-container">
       {/* NAVBAR */}
@@ -136,7 +124,7 @@ const DoctorDashboard = () => {
           </button>
 
           <button
-            className="btn-secondary"
+            className="btn-primary"
             onClick={() => navigate(`/doctor/${user.doctorId}/appointments`)}
             style={{ width: "100%" }}
           >
