@@ -9,39 +9,56 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setLoading] = useState(true);
 
+  // ----------------------------
+  // Load Patient ID using userId
+  // ----------------------------
+  const loadPatientId = async (userId) => {
+    try {
+      const res = await apiCall("GET", `/patient/by-user/${userId}`);
+      return res.data.patient_id;
+    } catch (err) {
+      console.error("Failed to fetch patientId");
+      return null;
+    }
+  };
   useEffect(() => {
-    validateToken();
+    const token = localStorage.getItem("access_token");
+    if (token) validateToken();
+    else setLoading(false);
   }, []);
 
-  // ✅ FIXED validateToken — matches backend response
   const validateToken = async () => {
-    const token = localStorage.getItem("access_token");
-    if (!token) {
-      setLoading(false);
-      return;
-    }
-
     try {
       const { data } = await apiCall("GET", API.AUTH_VALIDATE_TOKEN);
 
       const {
         email,
         role,
-        user_id,
-        doctor_id,
+        userId,
+        doctorId,
+        name,
       } = data || {};
 
-      setUserDetails({
+      let patientId = null;
+      if (role === "patient") {
+        patientId = await loadPatientId(userId);
+      }
+
+      // Build user object
+      const userObject = {
         email,
         role,
-        userId: user_id,
-        doctorId: doctor_id,
-        name: data.name || "Doctor",
-      });
+        userId,
+        doctorId,
+        patientId,  // <-- FIXED
+        name,
+      };
 
+      setUserDetails(userObject);
       setIsAuthenticated(true);
 
     } catch (error) {
+      console.error("Token validation failed:", error);
       localStorage.clear();
       setUserDetails(null);
       setIsAuthenticated(false);
@@ -50,7 +67,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Login (already fixed & destructured)
+
   const login = async (email, password) => {
     try {
       const { data } = await apiCall("POST", API.AUTH_LOGIN, { email, password });
@@ -69,22 +86,14 @@ export const AuthProvider = ({ children }) => {
         return { success: false, error: "Invalid server response" };
       }
 
-      // Save tokens & role
+      // Save tokens to local storage
       localStorage.setItem("access_token", access_token);
       localStorage.setItem("role", role.toLowerCase());
       localStorage.setItem("userId", userId);
       if (doctorId) localStorage.setItem("doctorId", doctorId);
 
-      // Save to state
-      setUserDetails({
-        email: userEmail,
-        role,
-        userId,
-        doctorId,
-        name,
-      });
-
-      setIsAuthenticated(true);
+      // 👇 After login, validate again to populate all details (patientId included)
+      await validateToken();
 
       return { success: true, role };
 
@@ -96,6 +105,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // ----------------------------
+  // LOGOUT
+  // ----------------------------
   const logout = () => {
     localStorage.clear();
     setUserDetails(null);
@@ -118,4 +130,5 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
+// Hook
 export const useAuth = () => useContext(AuthContext);

@@ -7,45 +7,19 @@ import { useAuth } from "../../context/authContext";
 
 const DoctorDashboard = () => {
   const { user, isLoading, logout } = useAuth();
-  
-  console.log("Auth Loading:", isLoading);
-  console.log("User:", user);
-  console.log("Doctor ID:", user?.doctorId);
-
-
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-  if (isLoading) return;
-  if (!user) return;
-  if (!user.doctorId) return;
+  console.log("Auth Loading:", isLoading);
+  console.log("User:", user);
+  console.log("Doctor ID:", user?.doctorId);
 
-  fetchDoctorStats();
-}, [isLoading, user]);
+  // ------------------ AUTH CHECKS ------------------
 
-  const fetchDoctorStats = async () => {
-    try {
-      const res = await apiCall(
-        "GET",
-        `${API.DOCTOR_DASHBOARD}/${user.doctorId}`
-      );
-      setStats(res.data);
-    } catch (error) {
-      console.error("Failed to load doctor stats:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
-
-  if (isLoading || loading) {
+  // 1️⃣ Wait for AuthContext to finish loading
+  if (isLoading) {
     return (
       <div className="admin-container">
         <div className="loading">Loading dashboard...</div>
@@ -53,8 +27,17 @@ const DoctorDashboard = () => {
     );
   }
 
-  // If doctor profile missing (should not happen)
-  if (!user?.doctorId) {
+  // 2️⃣ After auth is loaded → check for user
+  if (!user) {
+    return (
+      <div className="admin-container">
+        <div className="loading">User not found.</div>
+      </div>
+    );
+  }
+
+  // 3️⃣ User exists → check doctorId
+  if (user.role === "doctor" && !user.doctorId) {
     return (
       <div className="admin-container">
         <div className="loading">Doctor profile not found.</div>
@@ -62,6 +45,43 @@ const DoctorDashboard = () => {
     );
   }
 
+  // ------------------ FETCH DOCTOR STATS ------------------
+  useEffect(() => {
+    if (!user?.doctorId) return;
+
+    const fetchStats = async () => {
+      try {
+        const res = await apiCall(
+          "GET",
+          `${API.DOCTOR_DASHBOARD}/${user.doctorId}`
+        );
+        setStats(res.data);
+      } catch (error) {
+        console.error("Failed to load doctor stats:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, [user]);
+
+  // Still loading stats
+  if (loading) {
+    return (
+      <div className="admin-container">
+        <div className="loading">Loading dashboard...</div>
+      </div>
+    );
+  }
+
+  // ------------------ HANDLERS ------------------
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
+  // ------------------ FINAL UI ------------------
   return (
     <div className="admin-container">
       {/* NAVBAR */}
@@ -104,7 +124,6 @@ const DoctorDashboard = () => {
           </div>
         </div>
 
-        {/* SHORTCUT BUTTONS */}
         <h2 className="mt-30">Quick Actions</h2>
 
         <div className="stats-grid">
