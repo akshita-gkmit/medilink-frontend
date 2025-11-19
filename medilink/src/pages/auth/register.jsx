@@ -6,6 +6,8 @@ import InputField from "../../components/inputField";
 import { useAuth } from "../../context/authContext";
 import "../../index.css";
 
+
+
 const Register = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -16,6 +18,7 @@ const Register = () => {
     dob: '',
     blood_group: '',
   });
+  
 
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -56,20 +59,22 @@ const Register = () => {
 
     setLoading(true);
 
-    // Remove confirmPassword before sending to backend
     const { confirmPassword, ...userData } = formData;
 
-    const result = await register(userData);  // sends correct body
+    console.log("Sending userData to register:", userData);
 
-    if (result.success) {
+    const result = await register(userData);
+
+    console.log("Register response:", result);
+
+    if (result?.success) {
       setSuccess('Registration successful! Redirecting to login...');
       setTimeout(() => navigate(ROUTES.LOGIN), 2000);
     } else {
-      // Ensure error is always a string
       setError(
-        typeof result.error === "string"
+        typeof result?.error === "string"
           ? result.error
-          : JSON.stringify(result.error)
+          : "Registration failed. Try again."
       );
     }
 
@@ -82,6 +87,7 @@ const Register = () => {
     { value: "female", label: "Female" },
     { value: "other", label: "Other" }
   ];
+
   const bloodGroups = [
     { value: "", label: "Select Blood Group (Optional)" },
     { value: "A+", label: "A+" },
@@ -141,7 +147,6 @@ const Register = () => {
             </select>
           </div>
 
-
           <InputField
             label="Date of Birth"
             type="date"
@@ -165,7 +170,6 @@ const Register = () => {
               ))}
             </select>
           </div>
-
 
           <InputField
             label="Password"

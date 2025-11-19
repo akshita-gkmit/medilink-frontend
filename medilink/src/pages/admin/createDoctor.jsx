@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import API from "../../constants/apiEndpoints";
 import ROUTES from "../../constants/navigationPath";
 import { apiCall } from "../../services/apiHelper";
@@ -58,78 +59,65 @@ const CreateDoctor = () => {
 
         <form onSubmit={handleSubmit}>
 
-          {/* NAME */}
           <div className="form-group">
             <label>Doctor Name *</label>
             <input type="text" name="name" value={form.name} onChange={handleChange} required />
           </div>
 
-          {/* EMAIL */}
           <div className="form-group">
             <label>Email *</label>
             <input type="email" name="email" value={form.email} onChange={handleChange} required />
           </div>
 
-          {/* PASSWORD */}
           <div className="form-group">
             <label>Password *</label>
             <input type="password" name="password" value={form.password} onChange={handleChange} required />
           </div>
 
-          {/* SPECIALIZATION */}
           <div className="form-group">
             <label>Specialization</label>
             <input type="text" name="specialization" value={form.specialization} onChange={handleChange} />
           </div>
 
-          {/* QUALIFICATION */}
           <div className="form-group">
             <label>Qualification</label>
             <input type="text" name="qualification" value={form.qualification} onChange={handleChange} />
           </div>
 
-          {/* POSITION */}
           <div className="form-group">
             <label>Position</label>
             <input type="text" name="position" value={form.position} onChange={handleChange} />
           </div>
 
-          {/* DOB */}
           <div className="form-group">
             <label>DOB</label>
             <input type="date" name="dob" value={form.dob} onChange={handleChange} />
           </div>
 
-          {/* CHAMBER */}
           <div className="form-group">
             <label>Chamber</label>
             <input type="text" name="chamber" value={form.chamber} onChange={handleChange} />
           </div>
 
-          {/* START TIME */}
           <div className="form-group">
             <label>Start Time</label>
             <input type="time" name="start_time" value={form.start_time} onChange={handleChange} />
           </div>
 
-          {/* END TIME */}
           <div className="form-group">
             <label>End Time</label>
             <input type="time" name="end_time" value={form.end_time} onChange={handleChange} />
           </div>
 
-          {/* FEE */}
           <div className="form-group">
             <label>Consultation Fee</label>
             <input type="number" name="consultation_fee" value={form.consultation_fee} onChange={handleChange} />
           </div>
 
-          {/* SUBMIT */}
           <button type="submit" className="btn-primary">
             Create Doctor
           </button>
 
-          {/* BACK */}
           <button
             type="button"
             className="btn-secondary"
@@ -138,7 +126,6 @@ const CreateDoctor = () => {
           >
             Back to Dashboard
           </button>
-
         </form>
       </div>
     </div>

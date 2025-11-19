@@ -33,10 +33,9 @@ const AdminDashboard = () => {
         totalDoctors: data?.total_doctors,
         totalPatients: data?.total_users,
         totalAppointments: data?.total_appointments,
-        pendingRequests: data?.pending_requests || 0,
       });
     } catch (err) {
-      setError("Failed to load dashboard data");
+    setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -47,7 +46,7 @@ const AdminDashboard = () => {
       const res = await apiCall("GET", API.ADMIN_LIST_DOCTOR);
       setDoctors(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
-      setError("Failed to load doctors");
+    setError(err.message);
     } finally {
       setDoctorLoading(false);
     }
@@ -63,13 +62,10 @@ const AdminDashboard = () => {
           d.id === doctor_id ? { ...d, is_active: false } : d
         )
       );
-    } catch (error) {
-      console.error(error);
-      alert("Failed to delete doctor");
+    } catch (err) {
+    setError(err.message);
     }
   };
-
-
 
   const handleLogout = () => {
     logout();
@@ -91,6 +87,12 @@ const AdminDashboard = () => {
         <div className="navbar-menu">
           <span className="navbar-user">Welcome, {user?.name}</span>
           <button
+            onClick={() => navigate(ROUTES.ADMIN_VIEW_APPOINTMENTS)}
+            className="btn-secondary"
+          >
+            View Appointments
+          </button>
+          <button
             onClick={() => navigate(ROUTES.ADMIN_ADD_DOCTOR)}
             className="btn-secondary"
           >
@@ -102,14 +104,12 @@ const AdminDashboard = () => {
         </div>
       </nav>
 
-      {/* MAIN CONTENT */}
       <div className="content">
         <h1>Dashboard</h1>
 
         {error && <div className="error-message">{error}</div>}
         {success && <div className="success-message">{success}</div>}
 
-        {/* DASHBOARD STATS */}
         <div className="stats-grid">
           <div className="stat-card">
             <h3>Total Doctors</h3>
@@ -123,23 +123,19 @@ const AdminDashboard = () => {
             <h3>Total Appointments</h3>
             <p className="stat-number">{dashboardData?.totalAppointments}</p>
           </div>
-          <div className="stat-card">
-            <h3>Pending Requests</h3>
-            <p className="stat-number">{dashboardData?.pendingRequests}</p>
-          </div>
         </div>
 
-        {/* DOCTOR TABLE INSIDE DASHBOARD */}
         <h2 className="mt-30">Manage Doctors</h2>
 
         <div className="table-container">
-          <table className="data-table">
+          <table className="simple-table">
             <thead>
               <tr>
                 <th>ID</th>
                 <th>Name</th>
                 <th>Specialization</th>
                 <th>Position</th>
+                {/* <th>Status</th> */}
                 <th>Actions</th>
               </tr>
             </thead>
@@ -151,19 +147,16 @@ const AdminDashboard = () => {
                   <td>{doctor.name}</td>
                   <td>{doctor.specialization}</td>
                   <td>{doctor.position}</td>
-                  <td>{doctor.deleted_at}</td>
-
                   <td className="action-buttons">
                     <button
-                      onClick={() =>
-                         navigate(`/doctor/${doctor.id}`)
-                      }
+                      onClick={() => navigate(ROUTES.DOCTOR_ID)}
                       className="btn-view"
                     >
                       View
                     </button>
+
                     <button
-                      onClick={() => navigate(`/admin/doctor/update/${doctor.id}`)}
+                      onClick={() => navigate(ROUTES.ADMIN_DOCTOR_UPDATE_ID)}
                       className="btn-secondary"
                     >
                       Update
@@ -179,7 +172,6 @@ const AdminDashboard = () => {
                 </tr>
               ))}
             </tbody>
-
           </table>
         </div>
       </div>
