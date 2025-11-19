@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+
 import { apiCall } from "../services/apiHelper";
 import API from "../constants/apiEndpoints";
 
@@ -9,9 +10,6 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setLoading] = useState(true);
 
-  // ----------------------------
-  // Load Patient ID using userId
-  // ----------------------------
   const loadPatientId = async (userId) => {
     try {
       const res = await apiCall("GET", `/patient/by-user/${userId}`);
@@ -21,6 +19,7 @@ export const AuthProvider = ({ children }) => {
       return null;
     }
   };
+
   useEffect(() => {
     const token = localStorage.getItem("access_token");
     if (token) validateToken();
@@ -31,32 +30,23 @@ export const AuthProvider = ({ children }) => {
     try {
       const { data } = await apiCall("GET", API.AUTH_VALIDATE_TOKEN);
 
-      const {
-        email,
-        role,
-        userId,
-        doctorId,
-        name,
-      } = data || {};
+      const { email, role, userId, doctorId, name } = data || {};
 
       let patientId = null;
       if (role === "patient") {
         patientId = await loadPatientId(userId);
       }
 
-      // Build user object
-      const userObject = {
+      setUserDetails({
         email,
         role,
         userId,
         doctorId,
-        patientId,  // <-- FIXED
+        patientId,
         name,
-      };
+      });
 
-      setUserDetails(userObject);
       setIsAuthenticated(true);
-
     } catch (error) {
       console.error("Token validation failed:", error);
       localStorage.clear();
@@ -67,36 +57,39 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const register = async (data) => {
+  try {
+    const { response } = await apiCall("POST", API.AUTH_REGISTER, data);
+
+    return { success: true, data: response?.data };
+
+  } catch (error) {
+    return {
+      success: false,
+      error: error.response?.data?.detail || "Registration failed",
+    };
+  }
+};
+
 
   const login = async (email, password) => {
     try {
       const { data } = await apiCall("POST", API.AUTH_LOGIN, { email, password });
 
-      const {
-        access_token,
-        refresh_token,
-        email: userEmail,
-        role,
-        userId,
-        doctorId,
-        name
-      } = data || {};
+      const { access_token, role, userId, doctorId } = data || {};
 
       if (!access_token) {
         return { success: false, error: "Invalid server response" };
       }
 
-      // Save tokens to local storage
       localStorage.setItem("access_token", access_token);
       localStorage.setItem("role", role.toLowerCase());
       localStorage.setItem("userId", userId);
       if (doctorId) localStorage.setItem("doctorId", doctorId);
 
-      // 👇 After login, validate again to populate all details (patientId included)
       await validateToken();
 
       return { success: true, role };
-
     } catch (error) {
       return {
         success: false,
@@ -105,9 +98,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // ----------------------------
-  // LOGOUT
-  // ----------------------------
   const logout = () => {
     localStorage.clear();
     setUserDetails(null);
@@ -123,6 +113,7 @@ export const AuthProvider = ({ children }) => {
         isLoading,
         login,
         logout,
+        register, 
       }}
     >
       {children}
@@ -130,5 +121,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Hook
 export const useAuth = () => useContext(AuthContext);

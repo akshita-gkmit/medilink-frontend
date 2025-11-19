@@ -9,7 +9,7 @@ const DoctorList = ({ doctors, onSelectDoctor }) => {
 
           <button
             className="btn-primary"
-            onClick={() => onSelectDoctor(doc)}   // ✔ sending full doctor object
+            onClick={() => onSelectDoctor(doc)} 
           >
             Book Appointment
           </button>

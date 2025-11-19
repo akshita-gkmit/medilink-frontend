@@ -6,15 +6,16 @@ const API = {
 
   // ADMIN
   ADMIN_DASHBOARD: "/admin/dashboard",
-  ADMIN_LIST_DOCTOR: "/admin",
+  ADMIN_LIST_DOCTOR: "/admin/",
   ADMIN_ADD_DOCTOR: "/admin/create",
   ADMIN_UPDATE_DOCTOR: "/admin/doctor/update",
   ADMIN_DOCTOR_DELETE: "/admin/doctor/delete",
-  ADMIN_DOCTOR_EMAIL: "/admin/doctor/email",
+  ADMIN_ALL_APPOINTMENTS: "/admin/appointments/all",
 
   // DOCTOR
   GET_DOCTOR: "/doctor",
-  GET_DOCTOR_SLOTS: "/doctor/slots",
+  
+  // GET_DOCTOR_SLOTS: "/doctor/slots",
   CREATE_DOCTOR_SLOTS: "/doctor/slots/create",
   DOCTOR_DASHBOARD: "/doctor/dashboard",
 
@@ -30,6 +31,7 @@ const API = {
   // BOOKING
   PATIENT_BOOK_APPOINTMENT: "/patient/appointment/book",
   CANCEL_APPOINTMENT: "/patient/cancel",
+
 };
 
 export default API;

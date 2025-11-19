@@ -1,5 +1,5 @@
-// bookAppointment.jsx
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+
 import { apiCall } from "../../services/apiHelper";
 import API from "../../constants/apiEndpoints";
 import { useAuth } from "../../context/authContext";
@@ -20,7 +20,6 @@ export default function BookAppointment({ doctor, close, refreshAppointments }) 
     if (doctorId) loadSlots(date);
   }, [doctorId]);
 
-  /** Load available slots */
   async function loadSlots(dateToLoad) {
     setLoadingSlots(true);
     setError(null);
@@ -41,7 +40,6 @@ export default function BookAppointment({ doctor, close, refreshAppointments }) 
     }
   }
 
-  /** Book appointment */
   const confirmBooking = async () => {
     if (!selectedSlotId) return;
 

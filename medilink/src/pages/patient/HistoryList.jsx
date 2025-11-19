@@ -18,14 +18,13 @@ const HistoryList = ({ history, close }) => {
           </thead>
 
           <tbody>
-            {history.length === 0 ? (
+            {history?.length === 0 ? (
               <tr>
                 <td colSpan="5" style={{ textAlign: "center", padding: "15px" }}>
                   No past appointments found.
                 </td>
               </tr>
-            ) : (
-              history.map((item) => (
+            ) : (history.map((item) => (
                 <tr key={item.id}>
                   <td>{item.doctor_name}</td>
                   <td>{item.date}</td>
