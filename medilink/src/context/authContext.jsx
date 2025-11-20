@@ -9,9 +9,6 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setLoading] = useState(true);
 
-  // ----------------------------
-  // Load Patient ID using userId
-  // ----------------------------
   const loadPatientId = async (userId) => {
     try {
       const res = await apiCall("GET", `/patient/by-user/${userId}`);
@@ -50,7 +47,7 @@ export const AuthProvider = ({ children }) => {
         role,
         userId,
         doctorId,
-        patientId,  // <-- FIXED
+        patientId, 
         name,
       };
 
@@ -92,7 +89,6 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("userId", userId);
       if (doctorId) localStorage.setItem("doctorId", doctorId);
 
-      // 👇 After login, validate again to populate all details (patientId included)
       await validateToken();
 
       return { success: true, role };
@@ -105,9 +101,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // ----------------------------
-  // LOGOUT
-  // ----------------------------
   const logout = () => {
     localStorage.clear();
     setUserDetails(null);
@@ -130,5 +123,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Hook
 export const useAuth = () => useContext(AuthContext);

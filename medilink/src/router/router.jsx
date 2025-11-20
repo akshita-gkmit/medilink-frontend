@@ -29,8 +29,6 @@ const AppRouter = () => (
     <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
 
     <Route path="/patient/dashboard" element={<PatientDashboard />} />
-
-    {/* MUST HAVE THIS ROUTE */}
     <Route path="/patient/book/:doctorId" element={<BookAppointment />} />
 
     <Route path="/doctor/:doctor_id/slots" element={<ManageSlots />} />
