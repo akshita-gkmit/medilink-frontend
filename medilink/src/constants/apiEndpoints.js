@@ -14,8 +14,8 @@ const API = {
 
   // DOCTOR
   GET_DOCTOR: "/doctor",
-  
-  // GET_DOCTOR_SLOTS: "/doctor/slots",
+
+  GET_DOCTOR_SLOTS: "/doctor/slots",
   CREATE_DOCTOR_SLOTS: "/doctor/slots/create",
   DOCTOR_DASHBOARD: "/doctor/dashboard",
 

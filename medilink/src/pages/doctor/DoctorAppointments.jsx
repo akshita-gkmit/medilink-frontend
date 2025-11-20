@@ -29,19 +29,21 @@ export default function DoctorAppointments() {
 
   const updateStatus = async (id, type) => {
   try {
-    const url =
-      type === "approve"
-        ? `/appointments/${id}/approve`
-        : `/appointments/${id}/reject`;
+    const res = await apiCall(
+      "POST",
+      "/doctor/appointments/update-status",
+      {
+        appointment_id: id,
+        action: type,
+        notes: ""
+      }
+    );
 
-    const res = await apiCall("PATCH", url);
     alert(res.data.message);
 
     setAppointments(prev =>
       prev.map(a =>
-        a.id === id
-          ? { ...a, status: type === "approve" ? "approved" : "rejected" }
-          : a
+        a.id === id ? { ...a, status: type } : a
       )
     );
   } catch (err) {
@@ -49,6 +51,7 @@ export default function DoctorAppointments() {
     alert("Failed to update appointment");
   }
 };
+
 
 
 

@@ -149,14 +149,15 @@ const AdminDashboard = () => {
                   <td>{doctor.position}</td>
                   <td className="action-buttons">
                     <button
-                      onClick={() => navigate(ROUTES.DOCTOR_ID)}
+                      onClick={() => navigate(`/doctor/${doctor.id}`)}
+
                       className="btn-view"
                     >
                       View
                     </button>
 
                     <button
-                      onClick={() => navigate(ROUTES.ADMIN_DOCTOR_UPDATE_ID)}
+                      onClick={() => navigate(`/admin/doctor/update/${doctor.id}`)}
                       className="btn-secondary"
                     >
                       Update

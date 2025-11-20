@@ -7,7 +7,6 @@ import { useAuth } from "../../context/authContext";
 import "../../index.css";
 
 
-
 const Register = () => {
   const [formData, setFormData] = useState({
     name: '',
