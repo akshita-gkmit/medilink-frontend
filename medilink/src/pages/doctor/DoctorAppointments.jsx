@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 
 import { useAuth } from "../../context/authContext";
 import { apiCall } from "../../services/apiHelper";
-import API from "../../constants/apiEndpoints";
 import "../../index.css";
 
 export default function DoctorAppointments() {
@@ -12,45 +11,47 @@ export default function DoctorAppointments() {
   useEffect(() => {
     if (isLoading || !user?.doctorId) return;
 
-    const load = async () => {
+    const fetchDoctorAppointments = async () => {
       try {
         const res = await apiCall(
           "GET",
           `/doctor/${user.doctorId}/appointments`
         );
-        setAppointments(res.data || []);
+        setAppointments(res?.data || []);
       } catch (err) {
         console.error(err);
       }
     };
 
-    load();
+    fetchDoctorAppointments();
   }, [user, isLoading]);
 
   const updateStatus = async (id, type) => {
-  try {
-    const url =
-      type === "approve"
-        ? `/appointments/${id}/approve`
-        : `/appointments/${id}/reject`;
+    try {
+      const url =
+        type === "approve"
+          ? `/appointments/${id}/approve`
+          : `/appointments/${id}/reject`;
 
-    const res = await apiCall("PATCH", url);
-    alert(res.data.message);
+      const res = await apiCall("PATCH", url);
+      alert(res?.data.message);
 
-    setAppointments(prev =>
-      prev.map(a =>
-        a.id === id
-          ? { ...a, status: type === "approve" ? "approved" : "rejected" }
-          : a
-      )
-    );
-  } catch (err) {
-    console.error(err);
-    alert("Failed to update appointment");
-  }
-};
-
-
+      // Update UI instantly
+      setAppointments((prev) =>
+        prev.map((appointment) =>
+          appointment.id === id
+            ? {
+                ...appointment,
+                status: type === "approve" ? "approved" : "rejected",
+              }
+            : appointment
+        )
+      );
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update appointment");
+    }
+  };
 
   return (
     <div className="admin-container">
@@ -70,42 +71,55 @@ export default function DoctorAppointments() {
           </thead>
 
           <tbody>
-            {appointments.map((a) => (
-              <tr key={a.id}>
-                <td>{a.id}</td>
-                <td>{a.patient_name}</td>
-                <td>{a.date}</td>
-                <td>{a.start_time} - {a.end_time}</td>
-                <td>{a.status}</td>
+            {appointments.map((appointment) => {
+              const isPending =
+                String(appointment?.status).toLowerCase() === "pending";
+              const isApproved = appointment?.status === "approved";
 
-                <td>
-                    {String(a.status).toLowerCase() === "pending" ? (
-                        <>
-                        <button
-                            className="btn-delete"
-                            onClick={() => updateStatus(a.id, "approve")}
-                        >
-                            Approve
-                        </button>
+              return (
+                <tr key={appointment?.id}>
+                  <td>{appointment?.id}</td>
+                  <td>{appointment?.patient_name}</td>
+                  <td>{appointment?.date}</td>
+                  <td>
+                    {appointment?.start_time} – {appointment?.end_time}
+                  </td>
 
-                        <button
-                            className="btn-delete"
-                            onClick={() => updateStatus(a.id, "reject")}
-                        >
-                            Reject
-                        </button>
-                        </>
+                  <td>
+                    {!isPending ? (
+                      <strong style={{ color: isApproved ? "green" : "red" }}>
+                        {appointment?.status}
+                      </strong>
                     ) : (
-                        <strong style={{ color: a.status === "approved" ? "green" : "red" }}>
-                        {a.status}
-                        </strong>
+                      "Pending"
                     )}
-                </td>
+                  </td>
 
-              </tr>
-            ))}
+                  <td>
+                    {isPending ? (
+                      <>
+                        <button
+                          className="btn-approve"
+                          onClick={() => updateStatus(appointment?.id, "approve")}
+                        >
+                          Approve
+                        </button>
+
+                        <button
+                          className="btn-reject"
+                          onClick={() => updateStatus(appointment?.id, "reject")}
+                        >
+                          Reject
+                        </button>
+                      </>
+                    ) : (
+                      <em style={{ color: "#777" }}>No Action</em>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
-
         </table>
       </div>
     </div>

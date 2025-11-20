@@ -39,22 +39,22 @@ const ViewDoctor = () => {
       <h1>Doctor Details</h1>
 
       <div className="doctor-card">
-        <p><strong>Name:</strong> {doctor.name}</p>
-        <p><strong>Specialization:</strong> {doctor.specialization}</p>
-        <p><strong>Chamber:</strong> {doctor.chamber}</p>
+        <p><strong>Name:</strong> {doctor?.name}</p>
+        <p><strong>Specialization:</strong> {doctor?.specialization}</p>
+        <p><strong>Chamber:</strong> {doctor?.chamber}</p>
 
         {isAdmin && (
           <>
-            <p><strong>Email:</strong> {doctor.email}</p>
-            <p><strong>Status:</strong> {doctor.status ? "Active" : "Inactive"}</p>
-            <p><strong>Qualification:</strong> {doctor.qualification}</p>
-            <p><strong>Position:</strong> {doctor.position}</p>
-            <p><strong>Created At:</strong> {doctor.created_at}</p>
-            <p><strong>Updated At:</strong> {doctor.updated_at}</p>
+            <p><strong>Email:</strong> {doctor?.email}</p>
+            <p><strong>Status:</strong> {doctor?.status ? "Active" : "Inactive"}</p>
+            <p><strong>Qualification:</strong> {doctor?.qualification}</p>
+            <p><strong>Position:</strong> {doctor?.position}</p>
+            <p><strong>Created At:</strong> {doctor?.created_at}</p>
+            <p><strong>Updated At:</strong> {doctor?.updated_at}</p>
 
-            {doctor.deleted_at && (
+            {doctor?.deleted_at && (
               <p style={{ color: "red" }}>
-                <strong>Deleted At:</strong> {doctor.deleted_at}
+                <strong>Deleted At:</strong> {doctor?.deleted_at}
               </p>
             )}
           </>
