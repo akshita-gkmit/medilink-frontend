@@ -14,11 +14,9 @@ export default function DoctorAppointments() {
 
     const load = async () => {
       try {
-        const res = await apiCall(
-          "GET",
-          `/doctor/${user.doctorId}/appointments`
-        );
-        setAppointments(res.data || []);
+        const response = await apiCall(
+          "GET", API.DOCTOR_APPOINTMENTS(user.doctorId));
+        setAppointments(response?.data || []);
       } catch (err) {
         console.error(err);
       }
@@ -27,38 +25,39 @@ export default function DoctorAppointments() {
     load();
   }, [user, isLoading]);
 
-  const updateStatus = async (id, type) => {
+  const updateStatus = async (appointmentId, actionType) => {
   try {
-    const res = await apiCall(
-      "POST",
-      "/doctor/appointments/update-status",
+    const response = await apiCall("POST", API.DOCTOR_APPOINTMENT_UPDATE,
       {
-        appointment_id: id,
-        action: type,
+        appointment_id: appointmentId,
+        action: actionType,
         notes: ""
       }
     );
-
-    alert(res.data.message);
-
-    setAppointments(prev =>
-      prev.map(a =>
-        a.id === id ? { ...a, status: type } : a
+    alert(response?.data?.message);
+    setAppointments(previousAppointments =>
+      previousAppointments.map(appointment =>
+        appointment.id === appointmentId
+          ? { ...appointment, status: actionType }
+          : appointment
       )
     );
+
   } catch (err) {
     console.error(err);
-    alert("Failed to update appointment");
+
+    const backendMessage =
+      err?.response?.data?.message ||
+      err?.response?.data?.detail ||
+      "Something went wrong";
+
+    alert(backendMessage);
   }
 };
-
-
-
 
   return (
     <div className="admin-container">
       <h1>Appointment Requests</h1>
-
       <div className="table-container">
         <table className="simple-table">
           <thead>
@@ -71,44 +70,42 @@ export default function DoctorAppointments() {
               <th>Action</th>
             </tr>
           </thead>
-
           <tbody>
-            {appointments.map((a) => (
-              <tr key={a.id}>
-                <td>{a.id}</td>
-                <td>{a.patient_name}</td>
-                <td>{a.date}</td>
-                <td>{a.start_time} - {a.end_time}</td>
-                <td>{a.status}</td>
-
+            {appointments?.map((appointment) => (
+              <tr key={appointment?.id}>
+                <td>{appointment?.id}</td>
+                <td>{appointment?.patient_name}</td>
+                <td>{appointment?.date}</td>
+                <td>{appointment?.start_time} - {appointment?.end_time}</td>
+                <td>{appointment?.status}</td>
                 <td>
-                    {String(a.status).toLowerCase() === "pending" ? (
-                        <>
-                        <button
-                            className="btn-delete"
-                            onClick={() => updateStatus(a.id, "approve")}
-                        >
-                            Approve
-                        </button>
+                  {String(appointment.status).toLowerCase() === "pending" ? (
+                    <>
+                      <button
+                        className="btn-delete"
+                        onClick={() => updateStatus(appointment?.id, "approve")}
+                      >
+                        Approve
+                      </button>
 
-                        <button
-                            className="btn-delete"
-                            onClick={() => updateStatus(a.id, "reject")}
-                        >
-                            Reject
-                        </button>
-                        </>
-                    ) : (
-                        <strong style={{ color: a.status === "approved" ? "green" : "red" }}>
-                        {a.status}
-                        </strong>
-                    )}
+                      <button
+                        className="btn-delete"
+                        onClick={() => updateStatus(appointment?.id, "reject")}
+                      >
+                        Reject
+                      </button>
+                    </>
+                  ) : (
+                    <strong
+                      style={{
+                        color: appointment?.status === "approved" ? "green" : "red", }}>
+                      {appointment?.status}
+                    </strong>
+                  )}
                 </td>
-
               </tr>
             ))}
           </tbody>
-
         </table>
       </div>
     </div>

@@ -11,10 +11,11 @@ const ROUTES = {
 
   DOCTOR_ID_SLOTS: "/doctor/:doctor_id/slots",
   DOCTOR_ID_APPOINTMENTS: "/doctor/:doctorId/appointments",
-  ADMIN_DOCTOR_UPDATE_ID: "/admin/doctor/update/:doctor_id",
+  UPDATE_DOCTOR: (doctorId) => `/admin/doctor/update/${doctorId}`,
   DOCTOR_ID: "/doctor/${doctor.id}",
 
-  PATIENT_BOOK_DOCTOR_ID: "/patient/book/:doctorId"
+  PATIENT_BOOK_DOCTOR_ID: "/patient/book/:doctorId",
+
 };
 
 export default ROUTES;
