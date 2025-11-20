@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { apiCall } from "../services/apiHelper";
-import { useAuth } from "../context/authContext"; // to detect user role
+import { useAuth } from "../context/authContext"; 
 
 const ViewDoctor = () => {
   const { id } = useParams();
-  const { user } = useAuth(); // contains role: admin / doctor / patient
+  const { user } = useAuth(); 
 
   const [doctor, setDoctor] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -45,7 +45,6 @@ const ViewDoctor = () => {
         <p><strong>Specialization:</strong> {doctor.specialization}</p>
         <p><strong>Chamber:</strong> {doctor.chamber}</p>
 
-        {/* --- Admin Only Fields --- */}
         {isAdmin && (
           <>
             <p><strong>Email:</strong> {doctor.email}</p>

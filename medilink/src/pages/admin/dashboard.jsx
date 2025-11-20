@@ -69,8 +69,6 @@ const AdminDashboard = () => {
     }
   };
 
-
-
   const handleLogout = () => {
     logout();
     navigate(ROUTES.LOGIN);
@@ -102,14 +100,12 @@ const AdminDashboard = () => {
         </div>
       </nav>
 
-      {/* MAIN CONTENT */}
       <div className="content">
         <h1>Dashboard</h1>
 
         {error && <div className="error-message">{error}</div>}
         {success && <div className="success-message">{success}</div>}
 
-        {/* DASHBOARD STATS */}
         <div className="stats-grid">
           <div className="stat-card">
             <h3>Total Doctors</h3>
@@ -129,7 +125,6 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* DOCTOR TABLE INSIDE DASHBOARD */}
         <h2 className="mt-30">Manage Doctors</h2>
 
         <div className="table-container">
@@ -179,7 +174,6 @@ const AdminDashboard = () => {
                 </tr>
               ))}
             </tbody>
-
           </table>
         </div>
       </div>

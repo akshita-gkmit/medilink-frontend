@@ -32,9 +32,6 @@ const ManageDoctors = () => {
     }
   };
 
-  /** ==============================
-   * 🔥 Soft Delete Doctor by ID (PATCH)
-   * =============================== */
   const handleDelete = async (doctorId) => {
     if (!window.confirm(`Are you sure you want to delete doctor ID: ${doctorId}?`)) return;
 
@@ -79,8 +76,6 @@ const ManageDoctors = () => {
           >
             Dashboard
           </button>
-
-          
 
           <button onClick={handleLogout} className="btn-logout">
             Logout
@@ -133,11 +128,9 @@ const ManageDoctors = () => {
                         {deleteLoading === doctor.id ? "Deleting..." : "Delete"}
                       </button>
                     </td>
-
                   </tr>
                 ))}
               </tbody>
-
             </table>
           </div>
         )}

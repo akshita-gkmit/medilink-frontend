@@ -26,7 +26,7 @@ const CreateDoctor = () => {
   const [success, setSuccess] = useState("");
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm({ ...form, [e?.target?.name]: e?.target?.value });
   };
 
   const handleSubmit = async (e) => {
@@ -58,87 +58,92 @@ const CreateDoctor = () => {
 
         <form onSubmit={handleSubmit}>
 
-          {/* NAME */}
-          <div className="form-group">
-            <label>Doctor Name *</label>
-            <input type="text" name="name" value={form.name} onChange={handleChange} required />
-          </div>
+          <FormInput
+            label="Doctor Name"
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            required
+          />
 
-          {/* EMAIL */}
-          <div className="form-group">
-            <label>Email *</label>
-            <input type="email" name="email" value={form.email} onChange={handleChange} required />
-          </div>
+          <FormInput
+            label="Email"
+            type="email"
+            name="email"
+            value={form.email}
+            onChange={handleChange}
+            required
+          />
 
-          {/* PASSWORD */}
-          <div className="form-group">
-            <label>Password *</label>
-            <input type="password" name="password" value={form.password} onChange={handleChange} required />
-          </div>
+          <FormInput
+            label="Password"
+            type="password"
+            name="password"
+            value={form.password}
+            onChange={handleChange}
+            required
+          />
 
-          {/* SPECIALIZATION */}
-          <div className="form-group">
-            <label>Specialization</label>
-            <input type="text" name="specialization" value={form.specialization} onChange={handleChange} />
-          </div>
+          <FormInput
+            label="Specialization"
+            name="specialization"
+            value={form.specialization}
+            onChange={handleChange}
+          />
 
-          {/* QUALIFICATION */}
-          <div className="form-group">
-            <label>Qualification</label>
-            <input type="text" name="qualification" value={form.qualification} onChange={handleChange} />
-          </div>
+          <FormInput
+            label="Qualification"
+            name="qualification"
+            value={form.qualification}
+            onChange={handleChange}
+          />
 
-          {/* POSITION */}
-          <div className="form-group">
-            <label>Position</label>
-            <input type="text" name="position" value={form.position} onChange={handleChange} />
-          </div>
+          <FormInput
+            label="Position"
+            name="position"
+            value={form.position}
+            onChange={handleChange}
+          />
 
-          {/* DOB */}
-          <div className="form-group">
-            <label>DOB</label>
-            <input type="date" name="dob" value={form.dob} onChange={handleChange} />
-          </div>
+          <FormInput
+            label="DOB"
+            type="date"
+            name="dob"
+            value={form.dob}
+            onChange={handleChange}
+          />
 
-          {/* CHAMBER */}
-          <div className="form-group">
-            <label>Chamber</label>
-            <input type="text" name="chamber" value={form.chamber} onChange={handleChange} />
-          </div>
+          <FormInput
+            label="Chamber"
+            name="chamber"
+            value={form.chamber}
+            onChange={handleChange}
+          />
 
-          {/* START TIME */}
-          <div className="form-group">
-            <label>Start Time</label>
-            <input type="time" name="start_time" value={form.start_time} onChange={handleChange} />
-          </div>
+          <FormInput
+            label="Start Time"
+            type="time"
+            name="start_time"
+            value={form.start_time}
+            onChange={handleChange}
+          />
 
-          {/* END TIME */}
-          <div className="form-group">
-            <label>End Time</label>
-            <input type="time" name="end_time" value={form.end_time} onChange={handleChange} />
-          </div>
+          <FormInput
+            label="End Time"
+            type="time"
+            name="end_time"
+            value={form.end_time}
+            onChange={handleChange}
+          />
 
-          {/* FEE */}
-          <div className="form-group">
-            <label>Consultation Fee</label>
-            <input type="number" name="consultation_fee" value={form.consultation_fee} onChange={handleChange} />
-          </div>
-
-          {/* SUBMIT */}
-          <button type="submit" className="btn-primary">
-            Create Doctor
-          </button>
-
-          {/* BACK */}
-          <button
-            type="button"
-            className="btn-secondary"
-            style={{ width: "100%", marginTop: "1rem" }}
-            onClick={() => navigate(ROUTES.ADMIN_DASHBOARD)}
-          >
-            Back to Dashboard
-          </button>
-
+          <FormInput
+            label="Consultation Fee"
+            type="number"
+            name="consultation_fee"
+            value={form.consultation_fee}
+            onChange={handleChange}
+          />
+          <button type="button" className="btn-secondary" style={{ width: "100%", marginTop: "1rem" }} onClick={() => navigate(ROUTES.ADMIN_DASHBOARD)} > Back to Dashboard </button>
         </form>
       </div>
     </div>
