@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 
 import { useAuth } from "../../context/authContext";
 import { apiCall } from "../../services/apiHelper";
-import API from "../../constants/apiEndpoints";
 import "../../index.css";
 
 export default function DoctorAppointments() {
@@ -12,7 +11,7 @@ export default function DoctorAppointments() {
   useEffect(() => {
     if (isLoading || !user?.doctorId) return;
 
-    const load = async () => {
+    const fetchDoctorAppointments = async () => {
       try {
         const response = await apiCall(
           "GET", API.DOCTOR_APPOINTMENTS(user.doctorId));
@@ -22,7 +21,7 @@ export default function DoctorAppointments() {
       }
     };
 
-    load();
+    fetchDoctorAppointments();
   }, [user, isLoading]);
 
   const updateStatus = async (appointmentId, actionType) => {

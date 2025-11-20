@@ -7,7 +7,7 @@ import "../../index.css";
 export default function AdminAppointments() {
   const [appointments, setAppointments] = useState([]);
 
-  const load = async () => {
+  const getDoctorAppointments = async () => {
     try{
         const res = await apiCall("GET", API.ADMIN_ALL_APPOINTMENTS);
     setAppointments(res.data || []);
@@ -17,7 +17,7 @@ export default function AdminAppointments() {
   };
 
   useEffect(() => {
-    load();
+    getDoctorAppointments();
   }, []);
 
   return (
@@ -33,17 +33,18 @@ export default function AdminAppointments() {
             <th>Status</th>
           </tr>
         </thead>
-
-        <tbody>{appointments.map((appt) => (
-            <tr key={appt.id}>
-                <td>{appt.id}</td>
-                <td>{appt.patient_name}</td>
-                <td>{appt.doctor_name}</td>
-                <td>{appt.date}</td>
-                <td>{appt.start_time} - {appt.end_time}</td>
-                <td>{appt.status}</td>
+        <tbody>
+          {appointments.map(({ id, patient_name, doctor_name, date, start_time, end_time, status }) => (
+            <tr key={id}>
+              <td>{id}</td>
+              <td>{patient_name}</td>
+              <td>{doctor_name}</td>
+              <td>{date}</td>
+              <td>{start_time} - {end_time}</td>
+              <td>{status}</td>
             </tr>
-        ))}</tbody>
+          ))}
+        </tbody>
       </table>
     </div>
   );
