@@ -85,7 +85,7 @@ const AdminDashboard = () => {
       <nav className="navbar">
         <div className="navbar-brand">MediLink Admin</div>
         <div className="navbar-menu">
-          <span className="navbar-user">Welcome, {user?.name}</span>
+          <span className="navbar-user">Welcome, Boss</span>
           <button
             onClick={() => navigate(ROUTES.ADMIN_VIEW_APPOINTMENTS)}
             className="btn-secondary"
@@ -149,25 +149,28 @@ const AdminDashboard = () => {
                   <td>{doctor.position}</td>
                   <td className="action-buttons">
                     <button
-                      onClick={() => navigate(ROUTES.DOCTOR_ID)}
+                      onClick={() => navigate(`/doctor/${doctor.id}`)}
                       className="btn-view"
                     >
                       View
                     </button>
 
                     <button
-                      onClick={() => navigate(ROUTES.ADMIN_DOCTOR_UPDATE_ID)}
+                      onClick={() => navigate(ROUTES.UPDATE_DOCTOR(doctor.id))}
                       className="btn-secondary"
                     >
                       Update
                     </button>
 
-                    <button
-                      onClick={() => handleDelete(doctor.id)}
-                      className="btn-delete"
-                    >
-                      Delete
-                    </button>
+                    {doctor.status !== false && (
+                      <button
+                        onClick={() => handleDelete(doctor.id)}
+                        className="btn-delete"
+                      >
+                        Delete
+                      </button>
+                    )}
+
                   </td>
                 </tr>
               ))}

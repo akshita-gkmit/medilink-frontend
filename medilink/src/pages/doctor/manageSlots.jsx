@@ -87,10 +87,16 @@ const ManageSlots = () => {
     setSelectedSlots([]);
     fetchExistingSlots();
   } catch (error) {
-    console.error(error);
-    setMessage("Failed to save slots.");
-  }
-};
+      console.error(error);
+
+      const backendError =
+        error?.response?.data?.detail ||
+        error?.response?.data?.message ||
+        "Something went wrong";
+
+      setMessage(backendError);
+    }
+  };
 
   return (
     <div className="auth-container">

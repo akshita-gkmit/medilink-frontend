@@ -5,6 +5,7 @@ import { apiCall } from "../../services/apiHelper";
 import API from "../../constants/apiEndpoints";
 import "../../index.css";
 import { useAuth } from "../../context/authContext";
+import ROUTES from "../../constants/navigationPath";
 
 const DoctorDashboard = () => {
   const { user, isLoading, logout } = useAuth();

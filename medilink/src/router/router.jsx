@@ -8,9 +8,7 @@ import ViewDoctor from "../pages/ViewDoctor";
 import CreateDoctor from "../pages/admin/createDoctor";
 import UpdateDoctor from "../pages/admin/UpdateDoctor";
 import ManageSlots from "../pages/doctor/manageSlots";
-
 import DoctorDashboard from "../pages/doctor/doctorDashboad";
-
 import PatientDashboard from "../pages/patient/dashboard";
 import BookAppointment from "../pages/patient/bookAppointment";
 
@@ -36,7 +34,6 @@ const AppRouter = () => (
     <Route path={ROUTES.PATIENT_BOOK_DOCTOR_ID} element={<BookAppointment />} />
 
     <Route path={ROUTES.DOCTOR_ID_SLOTS} element={<ManageSlots />} />
-
     <Route path={ROUTES.LOGIN} element={<Login />} />
     <Route path={ROUTES.REGISTER} element={<Register />} />
 
@@ -50,7 +47,7 @@ const AppRouter = () => (
     <Route path={ROUTES.ADMIN_VIEW_APPOINTMENTS} element={<AdminAppointments />} />
     <Route path={ROUTES.ADMIN_ADD_DOCTOR} element={<CreateDoctor />} />
     <Route path={ROUTES.ADMIN_DOCTOR_UPDATE_ID} element={<UpdateDoctor />} />
-    <Route path={ROUTES.DOCTOR_ID} element={<ViewDoctor />} />
+    <Route path="/doctor/:id" element={<ViewDoctor />} />
     <Route path={ROUTES.ADMIN_ALL_APPOINTMENTS} element={<AdminAppointments />} />
     <Route path="*" element={<Navigate to={ROUTES.LOGIN} replace />} />
   </Routes>
