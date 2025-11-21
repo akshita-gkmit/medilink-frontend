@@ -14,8 +14,9 @@ const API = {
 
   // DOCTOR
   GET_DOCTOR: "/doctor",
-  
-  // GET_DOCTOR_SLOTS: "/doctor/slots",
+
+  DOCTOR_APPOINTMENT_UPDATE: "/doctor/appointments/update-status",
+  GET_DOCTOR_SLOTS: "/doctor/slots",
   CREATE_DOCTOR_SLOTS: "/doctor/slots/create",
   DOCTOR_DASHBOARD: "/doctor/dashboard",
 
@@ -31,6 +32,8 @@ const API = {
   // BOOKING
   PATIENT_BOOK_APPOINTMENT: "/patient/appointment/book",
   CANCEL_APPOINTMENT: "/patient/cancel",
+
+  DOCTOR_APPOINTMENTS: (doctorId) => `/doctor/${doctorId}/appointments`
 
 };
 

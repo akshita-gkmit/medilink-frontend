@@ -13,11 +13,9 @@ export default function DoctorAppointments() {
 
     const fetchDoctorAppointments = async () => {
       try {
-        const res = await apiCall(
-          "GET",
-          `/doctor/${user.doctorId}/appointments`
-        );
-        setAppointments(res?.data || []);
+        const response = await apiCall(
+          "GET", API.DOCTOR_APPOINTMENTS(user.doctorId));
+        setAppointments(response?.data || []);
       } catch (err) {
         console.error(err);
       }
@@ -26,37 +24,39 @@ export default function DoctorAppointments() {
     fetchDoctorAppointments();
   }, [user, isLoading]);
 
-  const updateStatus = async (id, type) => {
-    try {
-      const url =
-        type === "approve"
-          ? `/appointments/${id}/approve`
-          : `/appointments/${id}/reject`;
+  const updateStatus = async (appointmentId, actionType) => {
+  try {
+    const response = await apiCall("POST", API.DOCTOR_APPOINTMENT_UPDATE,
+      {
+        appointment_id: appointmentId,
+        action: actionType,
+        notes: ""
+      }
+    );
+    alert(response?.data?.message);
+    setAppointments(previousAppointments =>
+      previousAppointments.map(appointment =>
+        appointment.id === appointmentId
+          ? { ...appointment, status: actionType }
+          : appointment
+      )
+    );
 
-      const res = await apiCall("PATCH", url);
-      alert(res?.data.message);
+  } catch (err) {
+    console.error(err);
 
-      // Update UI instantly
-      setAppointments((prev) =>
-        prev.map((appointment) =>
-          appointment.id === id
-            ? {
-                ...appointment,
-                status: type === "approve" ? "approved" : "rejected",
-              }
-            : appointment
-        )
-      );
-    } catch (err) {
-      console.error(err);
-      alert("Failed to update appointment");
-    }
-  };
+    const backendMessage =
+      err?.response?.data?.message ||
+      err?.response?.data?.detail ||
+      "Something went wrong";
+
+    alert(backendMessage);
+  }
+};
 
   return (
     <div className="admin-container">
       <h1>Appointment Requests</h1>
-
       <div className="table-container">
         <table className="simple-table">
           <thead>
@@ -69,56 +69,41 @@ export default function DoctorAppointments() {
               <th>Action</th>
             </tr>
           </thead>
-
           <tbody>
-            {appointments.map((appointment) => {
-              const isPending =
-                String(appointment?.status).toLowerCase() === "pending";
-              const isApproved = appointment?.status === "approved";
+            {appointments?.map((appointment) => (
+              <tr key={appointment?.id}>
+                <td>{appointment?.id}</td>
+                <td>{appointment?.patient_name}</td>
+                <td>{appointment?.date}</td>
+                <td>{appointment?.start_time} - {appointment?.end_time}</td>
+                <td>{appointment?.status}</td>
+                <td>
+                  {String(appointment.status).toLowerCase() === "pending" ? (
+                    <>
+                      <button
+                        className="btn-delete"
+                        onClick={() => updateStatus(appointment?.id, "approve")}
+                      >
+                        Approve
+                      </button>
 
-              return (
-                <tr key={appointment?.id}>
-                  <td>{appointment?.id}</td>
-                  <td>{appointment?.patient_name}</td>
-                  <td>{appointment?.date}</td>
-                  <td>
-                    {appointment?.start_time} – {appointment?.end_time}
-                  </td>
-
-                  <td>
-                    {!isPending ? (
-                      <strong style={{ color: isApproved ? "green" : "red" }}>
-                        {appointment?.status}
-                      </strong>
-                    ) : (
-                      "Pending"
-                    )}
-                  </td>
-
-                  <td>
-                    {isPending ? (
-                      <>
-                        <button
-                          className="btn-approve"
-                          onClick={() => updateStatus(appointment?.id, "approve")}
-                        >
-                          Approve
-                        </button>
-
-                        <button
-                          className="btn-reject"
-                          onClick={() => updateStatus(appointment?.id, "reject")}
-                        >
-                          Reject
-                        </button>
-                      </>
-                    ) : (
-                      <em style={{ color: "#777" }}>No Action</em>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
+                      <button
+                        className="btn-delete"
+                        onClick={() => updateStatus(appointment?.id, "reject")}
+                      >
+                        Reject
+                      </button>
+                    </>
+                  ) : (
+                    <strong
+                      style={{
+                        color: appointment?.status === "approved" ? "green" : "red", }}>
+                      {appointment?.status}
+                    </strong>
+                  )}
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
