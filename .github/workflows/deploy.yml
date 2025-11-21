@@ -1,7 +1,7 @@
 on:
   push:
     branches: ["feature/deploy"]
-  workflow-dispatch:
+  workflow_dispatch:
 
 jobs:
   deploy:
