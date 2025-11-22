@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import { apiCall } from "../services/apiHelper";
-import { useAuth } from "../context/authContext"; 
-import { useAuth } from "../context/authContext"; 
+import { useAuth } from "../context/authContext";
 
 const ViewDoctor = () => {
   const { id } = useParams();

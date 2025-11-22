@@ -53,60 +53,72 @@ export default function DoctorAppointments() {
     alert(backendMessage);
   }
 };
+const headers = [
+  { label: 'ID', key: 'id' },
+  { label: 'Patient', key: 'patient_name' },
+  { label: 'Date', key: 'date' },
+  { label: 'Time', key: 'time' },
+  { label: 'Status', key: 'status' },
+  { label: 'Action', key: 'action' },
+];
 
-  return (
-    <div className="admin-container">
-      <h1>Appointment Requests</h1>
-      <div className="table-container">
-        <table className="simple-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Patient</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {appointments?.map((appointment) => (
-              <tr key={appointment?.id}>
-                <td>{appointment?.id}</td>
-                <td>{appointment?.patient_name}</td>
-                <td>{appointment?.date}</td>
-                <td>{appointment?.start_time} - {appointment?.end_time}</td>
-                <td>{appointment?.status}</td>
-                <td>
-                  {String(appointment.status).toLowerCase() === "pending" ? (
-                    <>
-                      <button
-                        className="btn-delete"
-                        onClick={() => updateStatus(appointment?.id, "approve")}
-                      >
-                        Approve
-                      </button>
-
-                      <button
-                        className="btn-delete"
-                        onClick={() => updateStatus(appointment?.id, "reject")}
-                      >
-                        Reject
-                      </button>
-                    </>
-                  ) : (
-                    <strong
-                      style={{
-                        color: appointment?.status === "approved" ? "green" : "red", }}>
-                      {appointment?.status}
-                    </strong>
-                  )}
-                </td>
-              </tr>
+return (
+  <div className="admin-container">
+    <h1>Appointment Requests</h1>
+    <div className="table-container">
+      <table className="simple-table">
+        <thead>
+          <tr>
+            {headers.map((header) => (
+              <th key={header.key}>{header.label}</th>
             ))}
-          </tbody>
-        </table>
-      </div>
+          </tr>
+        </thead>
+        <tbody>
+          {appointments?.map((appointment) => (
+            <tr key={appointment?.id}>
+              {headers.map((header) => (
+                <td key={header.key}>
+                  {header.key === 'time'
+                    ? `${appointment?.start_time} - ${appointment?.end_time}`
+                    : header.key === 'action'
+                    ? (
+                        <div>
+                          {String(appointment.status).toLowerCase() === 'pending' ? (
+                            <>
+                              <button
+                                className="btn-approve"
+                                onClick={() => updateStatus(appointment?.id, "approve")}
+                              >
+                                Approve
+                              </button>
+                              <button
+                                className="btn-reject"
+                                onClick={() => updateStatus(appointment?.id, "reject")}
+                              >
+                                Reject
+                              </button>
+                            </>
+                          ) : (
+                            <strong
+                              style={{
+                                color: appointment?.status === 'approved' ? 'green' : 'red',
+                              }}
+                            >
+                              {appointment?.status}
+                            </strong>
+                          )}
+                        </div>
+                      )
+                    : appointment[header.key]}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
-  );
+  </div>
+);
 }
+
