@@ -21,6 +21,6 @@ const API = {
   DOCTOR_SLOTS: "/patient/doctor",             
   PATIENT_BOOK_APPOINTMENT: "/patient/appointment/book",
   CANCEL_APPOINTMENT: "/patient/cancel",
-  // DOCTOR_BY_ID: (doctorId, slotDate) => `doctor/${doctorId}`
+  DOCTOR_APPOINTMENTS: (doctorId) => `/doctor/appointments/doctor/${doctorId}/appointments`
 };
 export default API;
