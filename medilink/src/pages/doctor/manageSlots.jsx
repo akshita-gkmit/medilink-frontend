@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+
 import { apiCall } from "../../services/apiHelper";
 import API from "../../constants/apiEndpoints";
 import { useAuth } from "../../context/authContext";
 import "../../index.css";
 
-// Generate 30 min interval slots 10AM–7PM
 const generateTimeSlots = () => {
   const slots = [];
   let start = 10 * 60; // 10:00
@@ -34,9 +34,6 @@ const ManageSlots = () => {
 
   const allSlots = generateTimeSlots();
 
-  // -----------------------------
-  // FETCH EXISTING SLOTS
-  // -----------------------------
   const fetchExistingSlots = async () => {
     if (!doctorId || !date) return;
 
@@ -61,9 +58,6 @@ const ManageSlots = () => {
     fetchExistingSlots();
   }, [doctorId, date]);
 
-  // -----------------------------
-  // TOGGLE SELECTION
-  // -----------------------------
   const toggleSlot = (time) => {
     if (selectedSlots.includes(time)) {
       setSelectedSlots(selectedSlots.filter((t) => t !== time));
@@ -72,9 +66,6 @@ const ManageSlots = () => {
     }
   };
 
-  // -----------------------------
-  // SAVE SLOTS
-  // -----------------------------
   const handleSave = async () => {
   if (!date || selectedSlots.length === 0) {
     setMessage("Please select a date and at least one slot.");
