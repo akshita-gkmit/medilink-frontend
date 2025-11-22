@@ -13,7 +13,7 @@ const API = {
   GET_DOCTOR: "/doctor",
   CREATE_DOCTOR_SLOTS: "/doctor/slots/create",
   DOCTOR_DASHBOARD: "/doctor/dashboard",
-
+  UPDATE_DOCTOR: (doctorId) => `/admin/doctor/update/${doctorId}`,
   PATIENT_DASHBOARD: "/patient/dashboard",
   PATIENT_APPOINTMENTS: "/patient/appointments",
   PATIENT_DOCTOR_SLOTS: "/patient/doctor",     
@@ -21,5 +21,6 @@ const API = {
   DOCTOR_SLOTS: "/patient/doctor",             
   PATIENT_BOOK_APPOINTMENT: "/patient/appointment/book",
   CANCEL_APPOINTMENT: "/patient/cancel",
+  // DOCTOR_BY_ID: (doctorId, slotDate) => `doctor/${doctorId}`
 };
 export default API;
