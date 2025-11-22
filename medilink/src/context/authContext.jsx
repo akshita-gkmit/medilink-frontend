@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+
 import { apiCall } from "../services/apiHelper";
 import API from "../constants/apiEndpoints";
 
@@ -18,6 +19,7 @@ export const AuthProvider = ({ children }) => {
       return null;
     }
   };
+
   useEffect(() => {
     const token = localStorage.getItem("access_token");
     if (token) validateToken();
@@ -28,32 +30,23 @@ export const AuthProvider = ({ children }) => {
     try {
       const { data } = await apiCall("GET", API.AUTH_VALIDATE_TOKEN);
 
-      const {
-        email,
-        role,
-        userId,
-        doctorId,
-        name,
-      } = data || {};
+      const { email, role, userId, doctorId, name } = data || {};
 
       let patientId = null;
       if (role === "patient") {
         patientId = await loadPatientId(userId);
       }
 
-      // Build user object
-      const userObject = {
+      setUserDetails({
         email,
         role,
         userId,
         doctorId,
-        patientId, 
+        patientId,
         name,
-      };
+      });
 
-      setUserDetails(userObject);
       setIsAuthenticated(true);
-
     } catch (error) {
       console.error("Token validation failed:", error);
       localStorage.clear();
@@ -64,26 +57,31 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const register = async (data) => {
+  try {
+    const { response } = await apiCall("POST", API.AUTH_REGISTER, data);
+
+    return { success: true, data: response?.data };
+
+  } catch (error) {
+    return {
+      success: false,
+      error: error.response?.data?.detail || "Registration failed",
+    };
+  }
+};
+
 
   const login = async (email, password) => {
     try {
       const { data } = await apiCall("POST", API.AUTH_LOGIN, { email, password });
 
-      const {
-        access_token,
-        refresh_token,
-        email: userEmail,
-        role,
-        userId,
-        doctorId,
-        name
-      } = data || {};
+      const { access_token, role, userId, doctorId } = data || {};
 
       if (!access_token) {
         return { success: false, error: "Invalid server response" };
       }
 
-      // Save tokens to local storage
       localStorage.setItem("access_token", access_token);
       localStorage.setItem("role", role.toLowerCase());
       localStorage.setItem("userId", userId);
@@ -92,7 +90,6 @@ export const AuthProvider = ({ children }) => {
       await validateToken();
 
       return { success: true, role };
-
     } catch (error) {
       return {
         success: false,
@@ -116,6 +113,7 @@ export const AuthProvider = ({ children }) => {
         isLoading,
         login,
         logout,
+        register, 
       }}
     >
       {children}

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import { useAuth } from "../../context/authContext";
 import { apiCall } from "../../services/apiHelper";
 import API from "../../constants/apiEndpoints";
@@ -7,7 +8,7 @@ import AppointmentList from "./appointments_list";
 import BookAppointment from "./bookAppointment";
 import { useNavigate } from "react-router-dom";
 import ROUTES from "../../constants/navigationPath";
-import HistoryList from "./HistoryList";
+import HistoryList from "./HistoryList.jsx";
 
 const PatientDashboard = () => {
   const { user, logout, isLoading } = useAuth();
@@ -19,7 +20,6 @@ const PatientDashboard = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [history, setHistory] = useState([]);
 
-  // ------------------ LOAD HISTORY ------------------
   const loadHistory = async () => {
     if (!user?.patientId) return;
 
@@ -34,13 +34,11 @@ const PatientDashboard = () => {
     }
   };
 
-  // ------------------ LOGOUT ------------------
   const handleLogout = () => {
     logout();
     navigate(ROUTES.LOGIN);
   };
 
-  // ------------------ LOAD DOCTORS ------------------
   const loadDoctors = async () => {
     try {
       const res = await apiCall("GET", API.GET_ALL_DOCTORS);
@@ -50,9 +48,8 @@ const PatientDashboard = () => {
     }
   };
 
-  // ------------------ LOAD APPOINTMENTS ------------------
   const loadAppointments = async () => {
-    if (!user?.patientId) return; // IMPORTANT FIX
+    if (!user?.patientId) return; 
 
     try {
       const res = await apiCall(
@@ -65,7 +62,6 @@ const PatientDashboard = () => {
     }
   };
 
-  // ------------------ INITIAL LOAD ------------------
   useEffect(() => {
     if (isLoading) return;
 

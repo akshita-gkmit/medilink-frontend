@@ -1,4 +1,3 @@
-import React from "react";
 import { apiCall } from "../../services/apiHelper";
 import API from "../../constants/apiEndpoints";
 
@@ -11,7 +10,7 @@ export default function AppointmentList({ appointments, refresh }) {
 
     try {
       await apiCall("DELETE", `${API.CANCEL_APPOINTMENT}/${id}`);
-      refresh(); // reload list
+      refresh();
     } catch (err) {
       console.error("Cancel failed", err);
       alert(err.response?.data?.detail || "Cancel failed");
