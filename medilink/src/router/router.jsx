@@ -49,8 +49,8 @@ const AppRouter = () => (
     <Route path={ROUTES.DOCTOR_ID_APPOINTMENTS} element={<DoctorAppointments />} />
     <Route path={ROUTES.ADMIN_VIEW_APPOINTMENTS} element={<AdminAppointments />} />
     <Route path={ROUTES.ADMIN_ADD_DOCTOR} element={<CreateDoctor />} />
-    <Route path={ROUTES.ADMIN_DOCTOR_UPDATE_ID} element={<UpdateDoctor />} />
-    <Route path={ROUTES.DOCTOR_ID} element={<ViewDoctor />} />
+    <Route path="/admin/doctor/update/:doctor_id" element={<UpdateDoctor />} />
+    <Route path="/doctor/:id" element={<ViewDoctor />} />
     <Route path={ROUTES.ADMIN_ALL_APPOINTMENTS} element={<AdminAppointments />} />
     <Route path="*" element={<Navigate to={ROUTES.LOGIN} replace />} />
   </Routes>

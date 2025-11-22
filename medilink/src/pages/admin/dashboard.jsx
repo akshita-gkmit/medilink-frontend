@@ -27,7 +27,7 @@ const AdminDashboard = () => {
   const fetchDashboard = async () => {
     try {
       const res = await apiCall("GET", API.ADMIN_DASHBOARD);
-      const data = res.data;
+      const data = res?.data;
 
       setDashboardData({
         totalDoctors: data?.total_doctors,
@@ -58,8 +58,8 @@ const AdminDashboard = () => {
       alert(res.data.message);
 
       setDoctors(prev =>
-        prev.map(d =>
-          d.id === doctor_id ? { ...d, is_active: false } : d
+        prev.map(doctor =>
+          doctor.id === doctor_id ? { ...doctor, is_active: false } : d
         )
       );
     } catch (err) {
@@ -135,7 +135,6 @@ const AdminDashboard = () => {
                 <th>Name</th>
                 <th>Specialization</th>
                 <th>Position</th>
-                {/* <th>Status</th> */}
                 <th>Actions</th>
               </tr>
             </thead>
@@ -149,14 +148,15 @@ const AdminDashboard = () => {
                   <td>{doctor.position}</td>
                   <td className="action-buttons">
                     <button
-                      onClick={() => navigate(ROUTES.DOCTOR_ID)}
+                      onClick={() => navigate(ROUTES.UPDATE_DOCTOR(doctor.id))}
+
                       className="btn-view"
                     >
                       View
                     </button>
 
                     <button
-                      onClick={() => navigate(ROUTES.ADMIN_DOCTOR_UPDATE_ID)}
+                      onClick={() => navigate()}
                       className="btn-secondary"
                     >
                       Update

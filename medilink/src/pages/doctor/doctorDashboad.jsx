@@ -13,25 +13,29 @@ const DoctorDashboard = () => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!user?.doctorId) return;
+  const fetchStats = async () => {
+    try {
+      const res = await apiCall(
+        "GET",
+        `${API.DOCTOR_DASHBOARD}/${user.doctorId}`
+      );
+      setStats(res.data);
 
-    const fetchStats = async () => {
-      try {
-        const res = await apiCall(
-          "GET",
-          `${API.DOCTOR_DASHBOARD}/${user.doctorId}`
-        );
-        setStats(res.data);
-      } catch (error) {
-        console.error("Failed to load doctor stats:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    } catch (error) {
+      console.error("Failed to load doctor stats:", error);
 
-    fetchStats();
-  }, [user]);
+      const backendMessage =
+        error?.response?.data?.message ||
+        error?.response?.data?.detail ||
+        "Unable to fetch doctor dashboard";
+
+      setStats({ error: backendMessage });
+
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   if (isLoading) {
     return (
@@ -72,7 +76,6 @@ const DoctorDashboard = () => {
 
   return (
     <div className="admin-container">
-      {/* NAVBAR */}
       <nav className="navbar">
         <div className="navbar-brand">MediLink Doctor</div>
         <div className="navbar-menu">
