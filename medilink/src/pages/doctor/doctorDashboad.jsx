@@ -5,37 +5,33 @@ import { apiCall } from "../../services/apiHelper";
 import API from "../../constants/apiEndpoints";
 import "../../index.css";
 import { useAuth } from "../../context/authContext";
+import ROUTES from "../../constants/navigationPath";
 
 const DoctorDashboard = () => {
   const { user, isLoading, logout } = useAuth();
   const [stats, setStats] = useState(null);
-  const [loading, setLoading] = useState(true);
-
+  const [statsLoading, setStatsLoading] = useState(true);
   const navigate = useNavigate();
 
-  const fetchStats = async () => {
-    try {
-      const res = await apiCall(
-        "GET",
-        `${API.DOCTOR_DASHBOARD}/${user.doctorId}`
-      );
-      setStats(res.data);
+  useEffect(() => {
+    if (!user?.doctorId) return;
 
-    } catch (error) {
-      console.error("Failed to load doctor stats:", error);
+    const fetchStats = async () => {
+      try {
+        const res = await apiCall(
+          "GET",
+          `${API.DOCTOR_DASHBOARD}/${user.doctorId}`
+        );
+        setStats(res.data);
+      } catch (error) {
+        console.error("Failed to load doctor stats:", error);
+      } finally {
+        setStatsLoading(false);
+      }
+    };
 
-      const backendMessage =
-        error?.response?.data?.message ||
-        error?.response?.data?.detail ||
-        "Unable to fetch doctor dashboard";
-
-      setStats({ error: backendMessage });
-
-    } finally {
-      setLoading(false);
-    }
-  };
-
+    fetchStats();
+  }, [user]);
 
   if (isLoading) {
     return (
@@ -57,14 +53,6 @@ const DoctorDashboard = () => {
     return (
       <div className="admin-container">
         <div className="loading">Doctor profile not found.</div>
-      </div>
-    );
-  }
-
-  if (loading) {
-    return (
-      <div className="admin-container">
-        <div className="loading">Loading dashboard...</div>
       </div>
     );
   }
@@ -94,46 +82,51 @@ const DoctorDashboard = () => {
         </div>
       </nav>
 
-      {/* CONTENT */}
       <div className="content">
         <h1>Dashboard</h1>
 
-        <div className="stats-grid">
-          <div className="stat-card">
-            <h3>Today's Appointments</h3>
-            <p className="stat-number">{stats?.todayAppointments}</p>
-          </div>
+        {statsLoading ? (
+          <div className="loading">Loading stats...</div>
+        ) : (
+          <>
+            <div className="stats-grid">
+              <div className="stat-card">
+                <h3>Today's Appointments</h3>
+                <p className="stat-number">{stats?.todayAppointments}</p>
+              </div>
 
-          <div className="stat-card">
-            <h3>Total Patients</h3>
-            <p className="stat-number">{stats?.totalPatients}</p>
-          </div>
+              <div className="stat-card">
+                <h3>Total Patients</h3>
+                <p className="stat-number">{stats?.totalPatients}</p>
+              </div>
 
-          <div className="stat-card">
-            <h3>Upcoming Appointments</h3>
-            <p className="stat-number">{stats?.upcomingAppointments}</p>
-          </div>
-        </div>
+              <div className="stat-card">
+                <h3>Upcoming Appointments</h3>
+                <p className="stat-number">{stats?.upcomingAppointments}</p>
+              </div>
+            </div>
 
-        <h2 className="mt-30">Quick Actions</h2>
+            <h2 className="mt-30">Quick Actions</h2>
 
-        <div className="stats-grid">
-          <button
-            className="btn-primary"
-            onClick={() => navigate(`/doctor/${user.doctorId}/slots`)}
-            style={{ width: "100%" }}
-          >
-            Manage Appointment Slots
-          </button>
+            <div className="stats-grid">
+              <button
+                className="btn-primary"
+                onClick={() => navigate(`/doctor/${user.doctorId}/slots`)}
+                style={{ width: "100%" }}
+              >
+                Manage Appointment Slots
+              </button>
 
-          <button
-            className="btn-primary"
-            onClick={() => navigate(`/doctor/${user.doctorId}/appointments`)}
-            style={{ width: "100%" }}
-          >
-            View Appointments
-          </button>
-        </div>
+              <button
+                className="btn-primary"
+                onClick={() => navigate(`/doctor/${user.doctorId}/appointments`)}
+                style={{ width: "100%" }}
+              >
+                View Appointments
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

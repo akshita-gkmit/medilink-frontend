@@ -8,9 +8,7 @@ import ViewDoctor from "../pages/ViewDoctor";
 import CreateDoctor from "../pages/admin/createDoctor";
 import UpdateDoctor from "../pages/admin/UpdateDoctor";
 import ManageSlots from "../pages/doctor/manageSlots";
-
 import DoctorDashboard from "../pages/doctor/doctorDashboad";
-
 import PatientDashboard from "../pages/patient/dashboard";
 import BookAppointment from "../pages/patient/bookAppointment";
 
@@ -36,7 +34,6 @@ const AppRouter = () => (
     <Route path={ROUTES.PATIENT_BOOK_DOCTOR_ID} element={<BookAppointment />} />
 
     <Route path={ROUTES.DOCTOR_ID_SLOTS} element={<ManageSlots />} />
-
     <Route path={ROUTES.LOGIN} element={<Login />} />
     <Route path={ROUTES.REGISTER} element={<Register />} />
 
