@@ -1,0 +1,31 @@
+on:
+  push:
+    branches: ["develop"]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Deploy frontend to EC2 (ONLY ONE FUNCTION)
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ubuntu
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          cd /home/ubuntu/medilink-frontend/medilink
+
+          git fetch --all
+          git reset --hard origin/feature/deploy
+
+          npm install
+
+          npm run build
+
+          sudo rm -rf /var/www/html/*
+
+          sudo cp -r dist/* /var/www/html/
+
+          sudo systemctl restart nginx

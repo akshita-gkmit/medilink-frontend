@@ -279,3 +279,124 @@ button:hover {
   font-weight: bold;
   color: var(--primary);
 }
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 15px;
+}
+
+.history-table th {
+  background: #2a7ade;
+  color: white;
+  padding: 12px;
+  text-align: left;
+}
+
+.history-table td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.history-table tr:hover {
+  background: #f1f5ff;
+}
+
+/* status styling */
+.status-booked {
+  padding: 5px 10px;
+  background: #28a745;
+  color: white;
+  border-radius: 5px;
+  font-size: 12px;
+}
+
+.status-cancelled {
+  padding: 5px 10px;
+  background: #dc3545;
+  color: white;
+  border-radius: 5px;
+  font-size: 12px;
+}
+
+.large-modal {
+  width: 80%;
+  max-width: 900px;
+}
+
+/* TABLE WRAPPER */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 20px;
+}
+
+/* MAIN TABLE */
+.simple-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+/* HEADERS */
+.simple-table th {
+  background: #2c3e50;
+  color: white;
+  padding: 12px;
+  text-align: left;
+}
+
+/* ROWS */
+.simple-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* HOVER EFFECT */
+.simple-table tr:hover {
+  background: #f6f6f6;
+}
+
+/* BUTTONS */
+.btn-cancel {
+  background: #e74c3c;
+  padding: 6px 12px;
+  border-radius: 4px;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-cancel:hover {
+  background: #c0392b;
+}
+
+.status-pill {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.status-booked {
+  background: #3498db22;
+  color: #3498db;
+}
+
+.status-cancelled {
+  background: #e74c3c22;
+  color: #e74c3c;
+}
+
+.status-completed {
+  background: #2ecc7122;
+  color: #27ae60;
+}

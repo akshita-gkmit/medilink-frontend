@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+
 import API from "../../constants/apiEndpoints";
 import { apiCall } from "../../services/apiHelper";
 import ROUTES from "../../constants/navigationPath";
@@ -21,8 +22,8 @@ const UpdateDoctor = () => {
     try {
       const res = await apiCall("GET", `${API.GET_DOCTOR}/${doctor_id}`);
       setForm(res.data);
-    } catch (e) {
-      setMsg("Failed to load doctor details");
+    } catch (err) {
+    setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -42,9 +43,9 @@ const UpdateDoctor = () => {
       setMsg("Doctor updated successfully!");
 
       setTimeout(() => navigate(ROUTES.ADMIN_DASHBOARD), 1000);
-    } catch (e) {
-      setMsg("Failed to update");
-    }
+    } catch (err) {
+    setError(err.message);
+  }
   };
 
   if (loading) return <div className="loading">Loading doctor...</div>;

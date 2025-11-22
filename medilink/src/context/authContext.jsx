@@ -10,26 +10,46 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setLoading] = useState(true);
 
+  const loadPatientId = async (userId) => {
+    try {
+      const res = await apiCall("GET", `/patient/by-user/${userId}`);
+      return res.data.patient_id;
+    } catch (err) {
+      console.error("Failed to fetch patientId");
+      return null;
+    }
+  };
+
   useEffect(() => {
-    validateToken();
+    const token = localStorage.getItem("access_token");
+    if (token) validateToken();
+    else setLoading(false);
   }, []);
 
   const validateToken = async () => {
-    const access_token = localStorage.getItem("access_token");
-    if (!access_token) {
-      setLoading(false);
-      return;
-    }
-
     try {
-      const response = await apiCall("GET", API.AUTH_VALIDATE_TOKEN);
-      setUserDetails(response?.data?.user || response?.data);
+      const { data } = await apiCall("GET", API.AUTH_VALIDATE_TOKEN);
+
+      const { email, role, userId, doctorId, name } = data || {};
+
+      let patientId = null;
+      if (role === "patient") {
+        patientId = await loadPatientId(userId);
+      }
+
+      setUserDetails({
+        email,
+        role,
+        userId,
+        doctorId,
+        patientId,
+        name,
+      });
+
       setIsAuthenticated(true);
     } catch (error) {
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("role");
-      localStorage.removeItem("userId");
-      localStorage.removeItem("doctorId");
+      console.error("Token validation failed:", error);
+      localStorage.clear();
       setUserDetails(null);
       setIsAuthenticated(false);
     } finally {
@@ -37,30 +57,39 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const register = async (data) => {
+  try {
+    const { response } = await apiCall("POST", API.AUTH_REGISTER, data);
+
+    return { success: true, data: response?.data };
+
+  } catch (error) {
+    return {
+      success: false,
+      error: error.response?.data?.detail || "Registration failed",
+    };
+  }
+};
+
+
   const login = async (email, password) => {
     try {
-      const response = await apiCall("Post", API.AUTH_LOGIN, { email, password });
-      const {access_token, role, doctorId, userId} = response?.data || {};       
+      const { data } = await apiCall("POST", API.AUTH_LOGIN, { email, password });
+
+      const { access_token, role, userId, doctorId } = data || {};
 
       if (!access_token) {
         return { success: false, error: "Invalid server response" };
       }
 
       localStorage.setItem("access_token", access_token);
-      localStorage.setItem("role", role?.toLowerCase());
-      if (userId) localStorage.setItem("userId", userId);
+      localStorage.setItem("role", role.toLowerCase());
+      localStorage.setItem("userId", userId);
       if (doctorId) localStorage.setItem("doctorId", doctorId);
 
-      setUserDetails({
-        role,
-        userId,
-        doctorId,
-        name: response?.data?.name 
-      });
+      await validateToken();
 
-      setIsAuthenticated(true);
-
-      return { success: true, role, userId, doctorId };
+      return { success: true, role };
     } catch (error) {
       return {
         success: false,
@@ -69,51 +98,24 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const register = async (formData) => {
-  try {
-    const response = await apiPost(ROUTES.AUTH_REGISTER, {
-      name: formData?.name,
-      email: formData?.email,
-      password: formData?.password,
-      gender: formData?.gender,
-      dob: formData?.dob,
-      blood_group: formData?.blood_group,
-    });
-
-    return {
-      success: true,
-      message: "Registration successful",
-      data: response.data
-    };
-  } catch (error) {
-    return {
-      success: false,
-      error: error.response?.data?.detail || JSON.stringify(error.response?.data)
-    };
-  }
-};
-
-
   const logout = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("role");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("doctorId");
+    localStorage.clear();
     setUserDetails(null);
     setIsAuthenticated(false);
   };
 
   return (
-    <AuthContext.Provider value={{
-  user: userDetails,
-  userDetails,
-  isAuthenticated,
-  isLoading,
-  login,
-  logout,
-  register
-}}>
-
+    <AuthContext.Provider
+      value={{
+        user: userDetails,
+        userDetails,
+        isAuthenticated,
+        isLoading,
+        login,
+        logout,
+        register, 
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

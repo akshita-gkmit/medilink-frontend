@@ -1,77 +1,196 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import { useParams, useNavigate } from "react-router-dom";
 
-const DoctorSlotManager = ({ doctorId }) => {
-  const [date, setDate] = useState("");
-  const [slots, setSlots] = useState([]);
-  const [selectedSlots, setSelectedSlots] = useState([]);
+import { apiCall } from "../../services/apiHelper";
+import API from "../../constants/apiEndpoints";
+import { useAuth } from "../../context/authContext";
+import "../../index.css";
 
-  // Fetch generated slots for selected date
-  const generateSlots = async () => {
-    if (!date) return;
-    const res = await axios.get(
-      `${import.meta.env.VITE_BASE_URL}/doctor/slots/generate`,
-      { params: { doctor_id: doctorId, date } }
-    );
-    setSlots(res.data.slots);
+const generateTimeSlots = () => {
+  const slots = [];
+  let start = 10 * 60; // 10:00
+  let end = 19 * 60;   // 19:00
+
+  while (start < end) {
+    const hours = String(Math.floor(start / 60)).padStart(2, "0");
+    const minutes = String(start % 60).padStart(2, "0");
+    slots.push(`${hours}:${minutes}`);
+    start += 30;
+  }
+  return slots;
+};
+
+const ManageSlots = () => {
+  const { user } = useAuth();
+  const doctorId = user?.doctor_id;        // Correct doctor ID
+  const navigate = useNavigate();
+
+  const today = new Date().toISOString().split("T")[0];
+  const [date, setDate] = useState(today);
+
+  const [existingSlots, setExistingSlots] = useState([]);   // already booked
+  const [selectedSlots, setSelectedSlots] = useState([]);   // user selecting
+  const [message, setMessage] = useState("");
+
+  const allSlots = generateTimeSlots();
+
+  const fetchExistingSlots = async () => {
+    if (!doctorId || !date) return;
+
+    try {
+      const res = await apiCall(
+        "get",
+        `/doctor/slots?doctor_id=${doctorId}&date=${date}`
+      );
+
+      // Backend must return array of objects
+      // Example: [{ start_time: "10:00", end_time: "10:30", status: "Booked" }]
+      const slotTimes = res?.data?.slots?.map((s) => s.start_time) || [];
+
+      setExistingSlots(slotTimes);
+    } catch (error) {
+      console.error("Failed to load slots:", error);
+      setExistingSlots([]);
+    }
   };
 
-  const handleCheckbox = (slot) => {
-    const key = `${slot.start_time}-${slot.end_time}`;
+  useEffect(() => {
+    fetchExistingSlots();
+  }, [doctorId, date]);
 
-    setSelectedSlots((prev) =>
-      prev.some((s) => `${s.start_time}-${s.end_time}` === key)
-        ? prev.filter((s) => `${s.start_time}-${s.end_time}` !== key) // remove
-        : [...prev, slot] // add
-    );
+  const toggleSlot = (time) => {
+    if (selectedSlots.includes(time)) {
+      setSelectedSlots(selectedSlots.filter((t) => t !== time));
+    } else {
+      setSelectedSlots([...selectedSlots, time]);
+    }
   };
 
-  const saveSlots = async () => {
-    await axios.post(`${import.meta.env.VITE_BASE_URL}/doctor/slots/save`, {
-      doctor_id: doctorId,
-      date,
-      selected_slots: selectedSlots,
-    });
+  const handleSave = async () => {
+  if (!date || selectedSlots.length === 0) {
+    setMessage("Please select a date and at least one slot.");
+    return;
+  }
 
-    alert("Slots saved successfully");
+  try {
+    const payload = {
+      doctor_id: user.doctorId,  
+      date: date,
+      slots: selectedSlots,
+    };
+
+    console.log("PAYLOAD:", JSON.stringify(payload, null, 2));
+
+    await apiCall("post", API.CREATE_DOCTOR_SLOTS, payload);
+
+    setMessage("Slots saved successfully!");
+    setSelectedSlots([]);
+    fetchExistingSlots();
+  } catch (error) {
+      console.error(error);
+
+      const backendError =
+        error?.response?.data?.detail ||
+        error?.response?.data?.message ||
+        "Something went wrong";
+
+      setMessage(backendError);
+    }
   };
 
   return (
-    <div className="p-6 bg-white rounded shadow">
-      <h1 className="text-xl font-semibold mb-4">Manage Your Slots</h1>
+    <div className="auth-container">
+      <div className="auth-card" style={{ maxWidth: "650px" }}>
+        <h1>Manage Appointment Slots</h1>
 
-      {/* Date Picker */}
-      <input
-        type="date"
-        className="border px-3 py-2 rounded"
-        value={date}
-        min={new Date().toISOString().split("T")[0]}                          // today
-        max={new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]} // +7 days
-        onChange={(e) => setDate(e.target.value)}
-        />
+        {message && <div className="error-message">{message}</div>}
 
+        {/* DATE PICKER */}
+        <div className="form-group">
+          <label>Select Date</label>
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => {
+              setDate(e.target.value);
+              setMessage("");
+            }}
+          />
+        </div>
 
-      {/* Slots Checkboxes */}
-      <div className="grid grid-cols-3 gap-3">
-        {slots.map((slot, index) => (
-          <label key={index} className="flex items-center gap-2 p-2 border rounded">
-            <input
-              type="checkbox"
-              onChange={() => handleCheckbox(slot)}
-            />
-            {slot.start_time} - {slot.end_time}
-          </label>
-        ))}
+        {/* SLOT GRID */}
+        {date && (
+          <>
+            <h3 style={{ marginTop: "1.5rem" }}>Available Time Slots</h3>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
+                gap: "12px",
+                marginTop: "1rem",
+              }}
+            >
+              {allSlots.map((time) => {
+                const isUsed = existingSlots.includes(time);
+                const isSelected = selectedSlots.includes(time);
+
+                return (
+                  <label
+                    key={time}
+                    style={{
+                      padding: "10px",
+                      borderRadius: "8px",
+                      border: "1px solid #ccc",
+                      background: isUsed
+                        ? "#dcdcdc"
+                        : isSelected
+                        ? "var(--primary)"
+                        : "#fff",
+                      color: isUsed
+                        ? "#444"
+                        : isSelected
+                        ? "#fff"
+                        : "#333",
+                      cursor: isUsed ? "not-allowed" : "pointer",
+                      opacity: isUsed ? 0.6 : 1,
+                      textAlign: "center",
+                      fontWeight: "500",
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      disabled={isUsed}
+                      checked={isSelected}
+                      onChange={() => toggleSlot(time)}
+                      style={{ display: "none" }}
+                    />
+                    {time}
+                  </label>
+                );
+              })}
+            </div>
+
+            <button
+              className="btn-primary"
+              onClick={handleSave}
+              style={{ marginTop: "1.5rem" }}
+            >
+              Save Slots
+            </button>
+
+            <button
+              className="btn-secondary"
+              style={{ marginTop: "1rem", width: "100%" }}
+              onClick={() => navigate(-1)}
+            >
+              Back
+            </button>
+          </>
+        )}
       </div>
-
-      <button
-        onClick={saveSlots}
-        className="mt-5 bg-blue-600 text-white px-4 py-2 rounded"
-      >
-        Save Slots
-      </button>
     </div>
   );
 };
 
-export default DoctorSlotManager;
+export default ManageSlots;
