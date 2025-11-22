@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../context/authContext";
 import { apiCall } from "../../services/apiHelper";
 import "../../index.css";
-
+import API from "../../constants/apiEndpoints";
 export default function DoctorAppointments() {
   const { user, isLoading } = useAuth();
   const [appointments, setAppointments] = useState([]);
