@@ -10,8 +10,7 @@ import ROUTES from "../../constants/navigationPath";
 const DoctorDashboard = () => {
   const { user, isLoading, logout } = useAuth();
   const [stats, setStats] = useState(null);
-  const [loading, setLoading] = useState(true);
-
+  const [statsLoading, setStatsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,14 +26,14 @@ const DoctorDashboard = () => {
       } catch (error) {
         console.error("Failed to load doctor stats:", error);
       } finally {
-        setLoading(false);
+        setStatsLoading(false);
       }
     };
 
     fetchStats();
   }, [user]);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="admin-container">
         <div className="loading">Loading user session...</div>
@@ -57,6 +56,7 @@ const DoctorDashboard = () => {
       </div>
     );
   }
+
   const handleLogout = () => {
     logout();
     navigate("/login");
@@ -82,46 +82,51 @@ const DoctorDashboard = () => {
         </div>
       </nav>
 
-      {/* CONTENT */}
       <div className="content">
         <h1>Dashboard</h1>
 
-        <div className="stats-grid">
-          <div className="stat-card">
-            <h3>Today's Appointments</h3>
-            <p className="stat-number">{stats?.todayAppointments}</p>
-          </div>
+        {statsLoading ? (
+          <div className="loading">Loading stats...</div>
+        ) : (
+          <>
+            <div className="stats-grid">
+              <div className="stat-card">
+                <h3>Today's Appointments</h3>
+                <p className="stat-number">{stats?.todayAppointments}</p>
+              </div>
 
-          <div className="stat-card">
-            <h3>Total Patients</h3>
-            <p className="stat-number">{stats?.totalPatients}</p>
-          </div>
+              <div className="stat-card">
+                <h3>Total Patients</h3>
+                <p className="stat-number">{stats?.totalPatients}</p>
+              </div>
 
-          <div className="stat-card">
-            <h3>Upcoming Appointments</h3>
-            <p className="stat-number">{stats?.upcomingAppointments}</p>
-          </div>
-        </div>
+              <div className="stat-card">
+                <h3>Upcoming Appointments</h3>
+                <p className="stat-number">{stats?.upcomingAppointments}</p>
+              </div>
+            </div>
 
-        <h2 className="mt-30">Quick Actions</h2>
+            <h2 className="mt-30">Quick Actions</h2>
 
-        <div className="stats-grid">
-          <button
-            className="btn-primary"
-            onClick={() => navigate(`/doctor/${user.doctorId}/slots`)}
-            style={{ width: "100%" }}
-          >
-            Manage Appointment Slots
-          </button>
+            <div className="stats-grid">
+              <button
+                className="btn-primary"
+                onClick={() => navigate(`/doctor/${user.doctorId}/slots`)}
+                style={{ width: "100%" }}
+              >
+                Manage Appointment Slots
+              </button>
 
-          <button
-            className="btn-primary"
-            onClick={() => navigate(`/doctor/${user.doctorId}/appointments`)}
-            style={{ width: "100%" }}
-          >
-            View Appointments
-          </button>
-        </div>
+              <button
+                className="btn-primary"
+                onClick={() => navigate(`/doctor/${user.doctorId}/appointments`)}
+                style={{ width: "100%" }}
+              >
+                View Appointments
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
