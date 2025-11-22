@@ -18,7 +18,7 @@ jobs:
           cd /home/ubuntu/medilink-frontend/medilink
 
           git fetch --all
-          git reset --hard origin/feature/deploy
+          git pull origin feature/deploy
 
           npm install
 
