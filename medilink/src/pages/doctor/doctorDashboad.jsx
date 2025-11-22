@@ -14,31 +14,27 @@ const DoctorDashboard = () => {
 
   const navigate = useNavigate();
 
-  const fetchStats = async () => {
-    try {
-      const res = await apiCall(
-        "GET",
-        `${API.DOCTOR_DASHBOARD}/${user.doctorId}`
-      );
-      setStats(res.data);
+  useEffect(() => {
+    if (!user?.doctorId) return;
 
-    } catch (error) {
-      console.error("Failed to load doctor stats:", error);
+    const fetchStats = async () => {
+      try {
+        const res = await apiCall(
+          "GET",
+          `${API.DOCTOR_DASHBOARD}/${user.doctorId}`
+        );
+        setStats(res.data);
+      } catch (error) {
+        console.error("Failed to load doctor stats:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      const backendMessage =
-        error?.response?.data?.message ||
-        error?.response?.data?.detail ||
-        "Unable to fetch doctor dashboard";
+    fetchStats();
+  }, [user]);
 
-      setStats({ error: backendMessage });
-
-    } finally {
-      setLoading(false);
-    }
-  };
-
-
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="admin-container">
         <div className="loading">Loading user session...</div>
@@ -61,15 +57,6 @@ const DoctorDashboard = () => {
       </div>
     );
   }
-
-  if (loading) {
-    return (
-      <div className="admin-container">
-        <div className="loading">Loading dashboard...</div>
-      </div>
-    );
-  }
-
   const handleLogout = () => {
     logout();
     navigate("/login");
