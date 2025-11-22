@@ -8,39 +8,39 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       includeAssets: [
-        "favicon.svg",
-        "favicon.ico",
-        "robots.txt",
-        "apple-touch-icon.png",
+        "logo192.png",
+        "logo512.png"
       ],
       manifest: {
-        name: "MediLink",
+        name: "MediLink - Healthcare Booking",
         short_name: "MediLink",
-        description: "Smart medical appointment and health management platform",
-        theme_color: "#27ae60",
+        description: "Healthcare appointment booking platform",
+        theme_color: "#007bff",
         background_color: "#ffffff",
         display: "standalone",
         start_url: "/",
         orientation: "portrait-primary",
+
         icons: [
           {
-            src: "/icons/icon-192x192.png",
+            src: "/logo192.png",
             sizes: "192x192",
             type: "image/png"
           },
           {
-            src: "/icons/icon-512x512.png",
+            src: "/logo512.png",
             sizes: "512x512",
             type: "image/png"
           },
           {
-            src: "/icons/icon-512x512.png",
+            src: "/logo512.png",
             sizes: "512x512",
             type: "image/png",
-            purpose: "any maskable"
+            purpose: "maskable"
           }
         ]
       },
+
       workbox: {
         globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
         runtimeCaching: [
