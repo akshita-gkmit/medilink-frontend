@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useEffect } from "react";
-
 import { apiCall } from "../services/apiHelper";
 import API from "../constants/apiEndpoints";
 
@@ -10,26 +9,54 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setLoading] = useState(true);
 
+  const loadPatientId = async (userId) => {
+    try {
+      const res = await apiCall("GET", `/patient/by-user/${userId}`);
+      return res.data.patient_id;
+    } catch (err) {
+      console.error("Failed to fetch patientId");
+      return null;
+    }
+  };
   useEffect(() => {
-    validateToken();
+    const token = localStorage.getItem("access_token");
+    if (token) validateToken();
+    else setLoading(false);
   }, []);
 
   const validateToken = async () => {
-    const access_token = localStorage.getItem("access_token");
-    if (!access_token) {
-      setLoading(false);
-      return;
-    }
-
     try {
-      const response = await apiCall("GET", API.AUTH_VALIDATE_TOKEN);
-      setUserDetails(response?.data?.user || response?.data);
+      const { data } = await apiCall("GET", API.AUTH_VALIDATE_TOKEN);
+
+      const {
+        email,
+        role,
+        userId,
+        doctorId,
+        name,
+      } = data || {};
+
+      let patientId = null;
+      if (role === "patient") {
+        patientId = await loadPatientId(userId);
+      }
+
+      // Build user object
+      const userObject = {
+        email,
+        role,
+        userId,
+        doctorId,
+        patientId, 
+        name,
+      };
+
+      setUserDetails(userObject);
       setIsAuthenticated(true);
+
     } catch (error) {
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("role");
-      localStorage.removeItem("userId");
-      localStorage.removeItem("doctorId");
+      console.error("Token validation failed:", error);
+      localStorage.clear();
       setUserDetails(null);
       setIsAuthenticated(false);
     } finally {
@@ -37,30 +64,35 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+
   const login = async (email, password) => {
     try {
-      const response = await apiCall("Post", API.AUTH_LOGIN, { email, password });
-      const {access_token, role, doctorId, userId} = response?.data || {};       
+      const { data } = await apiCall("POST", API.AUTH_LOGIN, { email, password });
+
+      const {
+        access_token,
+        refresh_token,
+        email: userEmail,
+        role,
+        userId,
+        doctorId,
+        name
+      } = data || {};
 
       if (!access_token) {
         return { success: false, error: "Invalid server response" };
       }
 
+      // Save tokens to local storage
       localStorage.setItem("access_token", access_token);
-      localStorage.setItem("role", role?.toLowerCase());
-      if (userId) localStorage.setItem("userId", userId);
+      localStorage.setItem("role", role.toLowerCase());
+      localStorage.setItem("userId", userId);
       if (doctorId) localStorage.setItem("doctorId", doctorId);
 
-      setUserDetails({
-        role,
-        userId,
-        doctorId,
-        name: response?.data?.name 
-      });
+      await validateToken();
 
-      setIsAuthenticated(true);
+      return { success: true, role };
 
-      return { success: true, role, userId, doctorId };
     } catch (error) {
       return {
         success: false,
@@ -69,51 +101,23 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const register = async (formData) => {
-  try {
-    const response = await apiPost(ROUTES.AUTH_REGISTER, {
-      name: formData?.name,
-      email: formData?.email,
-      password: formData?.password,
-      gender: formData?.gender,
-      dob: formData?.dob,
-      blood_group: formData?.blood_group,
-    });
-
-    return {
-      success: true,
-      message: "Registration successful",
-      data: response.data
-    };
-  } catch (error) {
-    return {
-      success: false,
-      error: error.response?.data?.detail || JSON.stringify(error.response?.data)
-    };
-  }
-};
-
-
   const logout = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("role");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("doctorId");
+    localStorage.clear();
     setUserDetails(null);
     setIsAuthenticated(false);
   };
 
   return (
-    <AuthContext.Provider value={{
-  user: userDetails,
-  userDetails,
-  isAuthenticated,
-  isLoading,
-  login,
-  logout,
-  register
-}}>
-
+    <AuthContext.Provider
+      value={{
+        user: userDetails,
+        userDetails,
+        isAuthenticated,
+        isLoading,
+        login,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
